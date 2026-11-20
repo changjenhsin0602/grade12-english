@@ -10,3 +10,4 @@
 | 冊 | 課 | 遊戲 | 網址 |
 | --- | --- | --- | --- |
 | B5 | L3–L4 | 單字片語挑戰（中英四選一） | https://changjenhsin0602.github.io/grade12-english/B5/L3-L4-words-phrases/ |
+| B5 | L3–L4 | 配對消消樂（25 個重點單字片語） | https://changjenhsin0602.github.io/grade12-english/B5/L3-L4-match-game/ |
