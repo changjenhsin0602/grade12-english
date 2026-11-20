@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B5 L3–L4 單字片語挑戰</title>
+<style>
+:root{--bg:#0f0f14;--panel:#1b1b24;--ink:#f5f3ee;--mute:#a9a6b5;--hot:#ff3d5a;--amp:#ffd23f;--ok:#2ee59d;--no:#ff4d4d;--line:#2c2c3a}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100vh;display:flex;justify-content:center;background:radial-gradient(1200px 600px at 50% -10%,#3a0d1a 0%,transparent 60%),var(--bg)}
+.wrap{width:100%;max-width:520px;padding:20px 16px 40px}
+h1{font-size:30px;line-height:1.15;margin:8px 0 4px;letter-spacing:.5px}
+h1 span{color:var(--hot)}
+.sub{color:var(--mute);margin:0 0 20px;font-size:15px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
+label{display:block;font-size:14px;color:var(--mute);margin:12px 0 6px}
+input,select{width:100%;font-size:18px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#121219;color:var(--ink);outline:none}
+input:focus,select:focus{border-color:var(--amp)}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.btn{display:block;width:100%;margin-top:18px;padding:16px;font-size:20px;font-weight:800;border:0;border-radius:14px;background:var(--hot);color:#fff;cursor:pointer;letter-spacing:1px;box-shadow:0 6px 0 #a3142c;transition:transform .05s}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #a3142c}
+.btn.ghost{background:transparent;border:2px solid var(--line);box-shadow:none;color:var(--ink);font-size:16px;padding:12px}
+.err{color:var(--no);font-size:14px;min-height:18px;margin-top:8px}
+.hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-variant-numeric:tabular-nums}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:15px}
+.music{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:15px;cursor:pointer}
+.bar{height:8px;background:#26263a;border-radius:99px;overflow:hidden;margin-bottom:18px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--hot),var(--amp));transition:width .3s}
+.prompt{font-size:14px;color:var(--mute);margin-bottom:6px}
+.q{font-size:34px;font-weight:800;line-height:1.2;margin:4px 0 20px;word-break:break-word;min-height:84px;display:flex;align-items:center}
+.opts{display:grid;gap:12px}
+.opt{text-align:left;font-size:20px;padding:16px 16px;border-radius:14px;border:2px solid var(--line);background:#14141c;color:var(--ink);cursor:pointer;display:flex;gap:12px;align-items:center;transition:transform .08s,background .15s,border-color .15s}
+.opt b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#26263a;font-size:16px;flex:none}
+.opt:active{transform:scale(.98)}
+.opt.ok{background:#0f3b2b;border-color:var(--ok)}
+.opt.no{background:#401418;border-color:var(--no);animation:shake .3s}
+.opt[disabled]{cursor:default}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.fb{min-height:34px;margin-top:14px;font-size:20px;font-weight:800;text-align:center}
+.fb.ok{color:var(--ok)}.fb.no{color:var(--no)}
+.combo{color:var(--amp);font-size:15px;text-align:center;min-height:20px}
+/* certificate */
+.cert{background:#fbf7ec;color:#1d1a14;border-radius:16px;padding:22px 20px;border:6px double #b8892b;position:relative}
+.cert h2{text-align:center;margin:0;font-size:28px;letter-spacing:6px;color:#8a1c2b}
+.cert .en{text-align:center;font-size:12px;letter-spacing:3px;color:#8a7a55;margin-bottom:12px}
+.cert .who{text-align:center;font-size:22px;font-weight:800;margin:8px 0 2px}
+.cert .meta{text-align:center;font-size:14px;color:#5b5444}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:16px 0 10px}
+.stat{background:#fff;border:1px solid #e3d6b5;border-radius:12px;padding:10px;text-align:center}
+.stat div{font-size:12px;color:#7a6f57}.stat strong{font-size:26px;font-variant-numeric:tabular-nums}
+.stamp{position:absolute;right:-10px;top:-14px;width:62px;height:62px;background:#fbf7ec;border-radius:50%;border:3px solid #c0283d;color:#c0283d;display:grid;place-items:center;font-weight:900;font-size:15px;transform:rotate(-14deg)}
+.wrong{margin-top:10px;font-size:14px;color:#5b5444}
+.wrong li{margin:2px 0}
+.tip{text-align:center;color:var(--amp);font-size:15px;margin:14px 0 0}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section id="start">
+  <h1>B5 L3–L4<br><span>單字片語挑戰</span></h1>
+  <p class="sub">中英四選一，一關 10 題。答完拿證書，截圖交給老師。<br><a href="../../" style="color:#ffd23f">← 回高三英文遊戲目錄</a></p>
+  <div class="card">
+    <div class="row">
+      <div><label for="cls">班級</label><input id="cls" inputmode="numeric" placeholder="例：301"></div>
+      <div><label for="seat">座號</label><input id="seat" inputmode="numeric" placeholder="例：18"></div>
+    </div>
+    <label for="nm">姓名</label><input id="nm" placeholder="你的名字">
+    <label for="mode">範圍</label>
+    <select id="mode"><option value="all">單字＋片語（全部 45 個）</option><option value="w">只考單字（34 個）</option><option value="p">只考片語（11 個）</option></select>
+    <div class="err" id="err"></div>
+    <button class="btn" id="go">開始挑戰 ▶</button>
+  </div>
+</section>
+
+<section id="play" class="hidden">
+  <div class="hud"><span class="pill" id="prog">1 / 10</span><span class="pill" id="clock">00:00</span><button class="music" id="mus">🎵 音樂開</button></div>
+  <div class="bar"><i id="barfill"></i></div>
+  <div class="prompt" id="prompt">選出正確的中文</div>
+  <div class="q" id="q"></div>
+  <div class="opts" id="opts"></div>
+  <div class="fb" id="fb"></div>
+  <div class="combo" id="combo"></div>
+</section>
+
+<section id="done" class="hidden">
+  <div class="cert" id="cert">
+    <div class="stamp" id="stamp">完成</div>
+    <h2>挑戰證書</h2>
+    <div class="en">CERTIFICATE · B5 L3–L4 VOCABULARY</div>
+    <div class="who" id="cWho"></div>
+    <div class="meta" id="cMeta"></div>
+    <div class="stats">
+      <div class="stat"><div>分數</div><strong id="sScore"></strong></div>
+      <div class="stat"><div>答對率</div><strong id="sRate"></strong></div>
+      <div class="stat"><div>答對題數</div><strong id="sRight"></strong></div>
+      <div class="stat"><div>答題時間</div><strong id="sTime"></strong></div>
+    </div>
+    <div class="meta" id="cWhen"></div>
+    <div class="wrong" id="wrong"></div>
+  </div>
+  <p class="tip">📸 請截圖這張證書，交給老師登記成績</p>
+  <button class="btn" id="again">再玩一關 ↻</button>
+</section>
+
+</div>
+<script>
+const W=[["brand", "品牌"], ["ancient", "古代的"], ["distant", "遙遠的"], ["element", "元素"], ["respectively", "分別地"], ["victory", "勝利"], ["reputation", "名聲"], ["intention", "意圖"], ["athlete", "運動員"], ["associate", "聯想"], ["excellence", "卓越"], ["conquer", "擊敗"], ["competitor", "競爭者"], ["attract", "吸引"], ["transform", "轉變"], ["relevant", "相關的"], ["magical", "有魔力的"], ["mystery", "謎團"], ["overnight", "突然"], ["discover", "發現"], ["evidence", "證據"], ["miserable", "悲慘的"], ["nightmare", "夢魘"], ["factor", "因素"], ["pollution", "汙染"], ["resource", "資源"], ["poisonous", "有毒的"], ["artificial", "人造的"], ["demonstrate", "證明"], ["worldwide", "全球"], ["supply", "供應"], ["various", "各種的"], ["deserve", "應得"], ["credit", "讚揚"]];
+const P=[["be related to", "與⋯⋯相關"], ["be traced back to", "追溯至⋯⋯"], ["in regard to", "至於；關於"], ["look through", "瀏覽"], ["come across", "偶然發現"], ["leave… behind", "丟下（人）；忘記拿（東西）"], ["result from", "起因於"], ["pass sth. on (to sb.)", "傳遞"], ["result in", "導致"], ["a thing of the past", "過時的事物；歷史"], ["play a role (in sth.)", "扮演角色；發揮作用"]];
+const CLASH=[["element","factor"],["result from","result in"]];
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];}return a;};
+let qs=[],qi=0,right=0,t0=0,tick=null,combo=0,log=[],player={};
+
+/* ---------- audio ---------- */
+let AC=null,master=null,musicOn=true,seqTimer=null,nextT=0,step=0;
+function ac(){if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.45;master.connect(AC.destination);}return AC;}
+let noiseBuf=null;function noise(){if(noiseBuf)return noiseBuf;const b=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return noiseBuf=b;}
+const BPM=126,S16=60/BPM/4;
+const N=n=>440*Math.pow(2,(n-69)/12);
+// Am - F - C - G (每和弦一小節)
+const CH=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]];const BASS=[45,41,48,43];
+let bus=null,delay=null;
+function setup(){if(bus)return;bus=AC.createGain();bus.gain.value=1;const comp=AC.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;bus.connect(comp).connect(master);
+ delay=AC.createDelay();delay.delayTime.value=S16*3;const fb=AC.createGain();fb.gain.value=.28;const dl=AC.createBiquadFilter();dl.type="lowpass";dl.frequency.value=2500;const wet=AC.createGain();wet.gain.value=.25;delay.connect(dl).connect(fb).connect(delay);dl.connect(wet).connect(bus);}
+function kick(t){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(45,t+.09);g.gain.setValueAtTime(.95,t);g.gain.exponentialRampToValueAtTime(.001,t+.28);o.connect(g).connect(bus);o.start(t);o.stop(t+.3);}
+function clap(t){[0,.012,.024].forEach(d=>{const s=AC.createBufferSource();s.buffer=noise();const f=AC.createBiquadFilter();f.type="bandpass";f.frequency.value=1600;f.Q.value=.8;const g=AC.createGain();g.gain.setValueAtTime(.32,t+d);g.gain.exponentialRampToValueAtTime(.001,t+d+.12);s.connect(f).connect(g).connect(bus);s.start(t+d);s.stop(t+d+.15);});}
+function hat(t,open){const s=AC.createBufferSource();s.buffer=noise();const f=AC.createBiquadFilter();f.type="highpass";f.frequency.value=8000;const g=AC.createGain();const len=open?.12:.03;g.gain.setValueAtTime(open?.12:.06,t);g.gain.exponentialRampToValueAtTime(.001,t+len);s.connect(f).connect(g).connect(bus);s.start(t);s.stop(t+len+.01);}
+function bassNote(t,n){const o=AC.createOscillator();o.type="sawtooth";o.frequency.value=N(n);const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(220,t+.15);const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.32,t+.01);g.gain.exponentialRampToValueAtTime(.001,t+S16*1.8);o.connect(f).connect(g).connect(bus);o.start(t);o.stop(t+S16*2);}
+function stab(t,ch){ch.forEach(n=>[-8,8].forEach(det=>{const o=AC.createOscillator();o.type="sawtooth";o.frequency.value=N(n+12);o.detune.value=det;const f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=1800;const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.035,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+S16*1.6);o.connect(f).connect(g);g.connect(bus);g.connect(delay);o.start(t);o.stop(t+S16*1.8);}));}
+function pluck(t,n){const o=AC.createOscillator();o.type="triangle";o.frequency.value=N(n+24);const g=AC.createGain();g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.09,t+.005);g.gain.exponentialRampToValueAtTime(.001,t+.16);o.connect(g);g.connect(bus);g.connect(delay);o.start(t);o.stop(t+.18);}
+const ARP=[0,1,2,1,0,2,1,2];
+function schedule(){setup();while(nextT<AC.currentTime+.15){const s=step%16,bar=Math.floor(step/16)%4,ch=CH[bar],intro=step<32;
+ if(s%4===0)kick(nextT);
+ if(!intro&&(s===4||s===12))clap(nextT);
+ if(s%4===2)hat(nextT,true);else if(!intro&&s%2===1)hat(nextT,false);
+ if(s%4===2)bassNote(nextT,BASS[bar]);
+ if(s===2||s===6||s===10||s===14)stab(nextT,ch);
+ if(!intro&&s%2===0)pluck(nextT,ch[ARP[(s/2)%8]]);
+ nextT+=S16;step++;}}
+function startMusic(){if(!musicOn)return;try{ac();if(AC.state==="suspended")AC.resume().catch(()=>{});if(seqTimer)return;nextT=AC.currentTime+.05;step=0;seqTimer=setInterval(()=>{try{schedule();}catch(e){stopMusic();}},40);}catch(e){musicOn=false;$("mus").textContent="🔇 音樂關";}}
+function stopMusic(){clearInterval(seqTimer);seqTimer=null;}
+function sfx(ok){try{ac();const t=AC.currentTime;const notes=ok?[659,880,1319]:[220,165];notes.forEach((f,i)=>{const o=AC.createOscillator(),g=AC.createGain();o.type=ok?"triangle":"sawtooth";o.frequency.value=f;g.gain.setValueAtTime(.25,t+i*.07);g.gain.exponentialRampToValueAtTime(.001,t+i*.07+.18);o.connect(g).connect(master);o.start(t+i*.07);o.stop(t+i*.07+.2);});}catch(e){}}
+$("mus").onclick=()=>{musicOn=!musicOn;$("mus").textContent=musicOn?"🎵 音樂開":"🔇 音樂關";musicOn?startMusic():stopMusic();};
+
+/* ---------- game ---------- */
+const clash=(a,b)=>CLASH.some(([x,y])=>(x===a&&y===b)||(x===b&&y===a));
+function build(mode){const pool=mode==="w"?W:mode==="p"?P:W.concat(P);const pick=shuffle(pool).slice(0,10);
+ return pick.map(it=>{const same=(W.includes(it)?W:P).filter(x=>x!==it&&!clash(x[0],it[0]));const ds=shuffle(same).slice(0,3);const en2zh=Math.random()<.5;
+  const opts=shuffle([it,...ds]);return {it,en2zh,opts};});}
+function fmt(s){const m=Math.floor(s/60),x=Math.floor(s%60);return String(m).padStart(2,"0")+":"+String(x).padStart(2,"0");}
+function show(id){["start","play","done"].forEach(x=>$(x).classList.toggle("hidden",x!==id));window.scrollTo(0,0);}
+$("go").onclick=()=>{const cls=$("cls").value.trim(),seat=$("seat").value.trim(),nm=$("nm").value.trim();
+ if(!cls||!seat||!nm){$("err").textContent="請填好班級、座號和姓名";return;}$("err").textContent="";
+ player={cls,seat,nm,mode:$("mode").value};try{localStorage.setItem("b5l34",JSON.stringify({cls,seat,nm}));}catch(e){}
+ try{startMusic();}catch(e){}begin();};
+try{const s=JSON.parse(localStorage.getItem("b5l34")||"null");if(s){$("cls").value=s.cls;$("seat").value=s.seat;$("nm").value=s.nm;}}catch(e){}
+function begin(){qs=build(player.mode);qi=0;right=0;combo=0;log=[];t0=performance.now();clearInterval(tick);tick=setInterval(()=>{$("clock").textContent=fmt((performance.now()-t0)/1000);},250);show("play");render();}
+function render(){const q=qs[qi];$("prog").textContent=`${qi+1} / ${qs.length}`;$("barfill").style.width=(qi/qs.length*100)+"%";
+ $("prompt").textContent=q.en2zh?"選出正確的中文":"選出正確的英文";$("q").textContent=q.en2zh?q.it[0]:q.it[1];$("fb").textContent="";$("fb").className="fb";
+ const box=$("opts");box.innerHTML="";q.opts.forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.innerHTML=`<b>${"ABCD"[i]}</b><span></span>`;b.querySelector("span").textContent=q.en2zh?o[1]:o[0];b.onclick=()=>pick(b,o);box.appendChild(b);});}
+function pick(btn,o){const q=qs[qi];const ok=o===q.it;const btns=[...$("opts").children];btns.forEach(b=>b.disabled=true);
+ const ci=q.opts.indexOf(q.it);btns[ci].classList.add("ok");
+ if(ok){right++;combo++;$("fb").textContent=["答對了！","太強了！","完美！","讚！"][Math.random()*4|0];$("fb").className="fb ok";$("combo").textContent=combo>=3?`🔥 連對 ${combo} 題`:"";}
+ else{btn.classList.add("no");combo=0;$("fb").textContent=`答錯了，正解：${q.it[0]} ＝ ${q.it[1]}`;$("fb").className="fb no";$("combo").textContent="";log.push(q.it);}
+ sfx(ok);setTimeout(()=>{qi++;if(qi<qs.length)render();else finish();},ok?800:1700);}
+function finish(){clearInterval(tick);const sec=(performance.now()-t0)/1000;$("barfill").style.width="100%";
+ const n=qs.length,score=Math.round(right/n*100);
+ $("cWho").textContent=`${player.cls} 班　${player.seat} 號　${player.nm}`;
+ $("cMeta").textContent={all:"範圍：單字＋片語",w:"範圍：單字",p:"範圍：片語"}[player.mode];
+ $("sScore").textContent=score;$("sRate").textContent=Math.round(right/n*100)+"%";$("sRight").textContent=`${right} / ${n}`;$("sTime").textContent=fmt(sec);
+ const d=new Date();$("cWhen").textContent="完成時間："+d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate()+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")+":"+String(d.getSeconds()).padStart(2,"0");
+ $("stamp").textContent=score===100?"滿分":score>=60?"過關":"再加油";
+ $("wrong").innerHTML=log.length?"<b>要再複習：</b><ul>"+log.map(x=>`<li>${x[0]}　${x[1]}</li>`).join("")+"</ul>":"<div style='text-align:center'>全部答對，太厲害了！</div>";
+ show("done");}
+$("again").onclick=()=>{try{startMusic();}catch(e){}begin();};
+</script>
+</body>
+</html>
