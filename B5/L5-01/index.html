@@ -152,8 +152,25 @@ details.rev{margin-top:10px}details.rev summary{cursor:pointer;font:700 16px "No
 .weak .w{font:800 20px "Baloo 2",sans-serif}.weak li span:last-child{font:700 15px "Noto Sans TC",sans-serif;color:var(--mute)}
 .tip{font:500 14px "Noto Sans TC",sans-serif;color:var(--mute);margin:10px 0 0}
 @media(max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cert .seal{position:static;margin:0 auto 6px;display:block}}
+/* 手機：題目與四個選項一個畫面看完 */
+@media(max-width:600px){
+.top{padding:8px 12px;gap:6px}.top h1{font-size:17px;width:auto}.top h1 small{font-size:11px}
+.tabs{flex-wrap:nowrap;overflow-x:auto;width:100%;gap:5px}.tabs button{min-height:34px;padding:0 10px;font-size:13px;flex:none}
+.stage{padding:4px 10px 10px}.meta{margin-bottom:6px;font-size:13px}.dots button{width:10px;height:10px}
+.card{padding:14px 14px 16px;border-radius:20px;box-shadow:0 6px 0 var(--line)}
+.card .kind{display:none}.card .kind,.card .prompt{padding-inline-end:0}
+.prompt{font-size:22px;line-height:1.3;margin:2px 0}
+.card.sit .prompt,.card.sit .ask{font-size:23px;line-height:1.3;margin:0}
+.ask{font-size:15px}.zh{font-size:15px;padding:4px 10px}.hintrow{margin-top:6px}
+.opts{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.opt{min-height:64px;padding:8px 10px;gap:8px;font-size:18px;border-radius:14px;border-width:2px}
+.opt b{width:28px;height:28px;font-size:15px}.opt .t{min-width:0;overflow-wrap:break-word}
+.gl{font-size:13px}.mark{font-size:26px;inset-inline-end:8px}
+.fb{margin-top:10px;min-height:0;padding:8px 12px;font-size:14px;line-height:1.45}
+.adv{margin-top:6px;font-size:13px;padding-bottom:6px}.adv button{min-height:34px;font-size:13px}
+.ctl{margin-top:10px}.ctl button{min-height:44px;font-size:15px;padding:0 18px}
+.note{display:none}.fbx{display:none}.gx{display:none}#qv{display:flex;flex-direction:column}#qv[hidden]{display:none}#qv .hintrow{order:3}#qv .fb{order:4}#qv .adv{order:5}#qv .opts{order:2}#qv .prompt,#qv .ask,#qv .kind,#qv .timer{order:1}.opt{display:block;font-size:clamp(13px,4.2vw,18px);padding:22px 6px 8px 8px;min-height:62px;text-align:start}.opt b{position:absolute;top:5px;left:6px;width:20px;height:20px;font-size:12px}.opt .t{overflow-wrap:break-word;word-break:normal;hyphens:none}.opt .mark{top:3px;inset-inline-end:7px;font-size:18px}.opt{padding-inline-end:8px}.opt{padding-inline-end:30px}.mark{top:6px;transform:none;font-size:20px;inset-inline-end:8px}.prompt,.card.sit .prompt,.card.sit .ask{text-wrap:pretty}.meta .dots{display:none}}
 [hidden]{display:none!important}
-@media(max-width:600px){.timer{width:64px;height:64px;font-size:28px}.card .kind,.card .prompt{padding-inline-end:72px}.team{gap:4px;padding:8px}.team .s{font-size:28px}.team button{width:40px;height:40px}.opts{grid-template-columns:minmax(0,1fr)}.opt{min-height:64px}.top h1{width:100%}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -256,13 +273,13 @@ function render(){
   const hint=q.z||'';
   const showZh=!!hint&&s.done;$('hintbtn').hidden=true;$('zh').hidden=!showZh;$('zh').textContent=hint;
   $('opts').innerHTML=q.ord.map((oi,k)=>{const ok=oi===0&&s.done,no=s.tried.includes(oi);
-    return `<button class="opt${ok?' ok':''}${no?' no':''}" data-o="${oi}" ${s.done||s.late||no?'disabled':''}><b>${L[k]}</b><span class="t">${esc(q.o[oi][0])}${s.done&&GL[q.o[oi][0].toLowerCase()]?`<small class="gl">${esc(GL[q.o[oi][0].toLowerCase()])}</small>`:''}</span>${ok?'<span class="mark">✓</span>':no?'<span class="mark">×</span>':''}</button>`}).join('');
+    return `<button class="opt${ok?' ok':''}${no?' no':''}" data-o="${oi}" ${s.done||s.late||no?'disabled':''}><b>${L[k]}</b><span class="t">${esc(q.o[oi][0])}${s.done&&GL[q.o[oi][0].toLowerCase()]?`<small class="gl">${(g=>{const k=g.indexOf('（');return k>0?esc(g.slice(0,k))+'<span class="gx">'+esc(g.slice(k))+'</span>':esc(g)})(GL[q.o[oi][0].toLowerCase()])}</small>`:''}</span>${ok?'<span class="mark">✓</span>':no?'<span class="mark">×</span>':''}</button>`}).join('');
   const last=s.tried[s.tried.length-1];
   const fb=$('fb');fb.className='fb';fb.textContent='';
-  if(s.wrong){fb.classList.add('no');fb.textContent='× '+OOPS[(st.i+st.r)%OOPS.length]+' '+q.o[last][1]+'　正確答案是 '+q.o[0][0]+'：'+q.o[0][1].replace(/^[^=]*= ?/,'')}
-  else if(s.late){fb.classList.add('no');fb.textContent='⏰ 時間到！答案是 '+q.o[0][0]+'：'+q.o[0][1].replace(/^[^=]*= ?/,'')}
-  else if(s.done){fb.classList.add('ok');fb.textContent='✓ '+(s.shown?'':(CHEER[(st.i+st.r)%CHEER.length])+' ')+q.o[0][1]}
-  else if(last!==undefined){fb.classList.add('no');fb.textContent='× '+OOPS[s.tried.length%OOPS.length]+' '+q.o[last][1]+'　再試一次！'}
+  const FB=(a,b)=>{fb.innerHTML=`<span class="fbs">${esc(a)}</span> <span class="fbx">${esc(b)}</span>`};
+  if(s.wrong){fb.classList.add('no');FB('× 正確答案是 '+q.o[0][0],OOPS[(st.i+st.r)%OOPS.length]+' '+q.o[last][1]+'　'+q.o[0][0]+'：'+q.o[0][1].replace(/^[^=]*= ?/,''))}
+  else if(s.late){fb.classList.add('no');FB('⏰ 時間到！答案是 '+q.o[0][0],q.o[0][1].replace(/^[^=]*= ?/,''))}
+  else if(s.done){fb.classList.add('ok');FB('✓ '+CHEER[(st.i+st.r)%CHEER.length],q.o[0][1])}
     }
 function nextState(){$('next').disabled=!cur().st.done}
 function pick(oi){const s=cur().st;if(s.done||s.late||s.tried.includes(oi))return;s.time=(performance.now()-t0)/1000;s.res=oi===0?'ok':'no';if(oi===0){s.done=true;stopT()}else{s.tried.push(oi);s.done=true;s.shown=true;s.wrong=true;stopT()}render();drawT();nextState();autoNext(2)}
