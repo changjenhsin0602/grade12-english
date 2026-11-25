@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>B5L5-01 字彙盲盒</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Noto+Sans+TC:wght@500;700;900&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 輕快可愛、給程度較弱的學生，字大、步驟少、答錯也不丟臉
+   IDEA: 課文講盲盒——每一題都是一個要「開」的盲盒，偶爾抽到隱藏版加倍分
+   PICTURE: 一個大大的盲盒（有緞帶、偷看的小糰子），打開後變成題目卡
+   COLOUR and TYPE: 泡泡糖粉底、莓果粉主色、奶油黃緞帶；Baloo 2 英文、Noto Sans TC 中文
+   LAYOUT: 上方關卡與進度，中間題目與四個大選項，下方各組分數 */
+:root{color-scheme:light dark;
+--bg:light-dark(#f5f3f0,#17151a);--card:light-dark(#fff,#221f27);--ink:light-dark(#221c26,#f3eff5);--mute:light-dark(#6b6570,#b3abb8);--sit:light-dark(#b45309,#f5b54a);
+--berry:#ff4f8b;--berryd:light-dark(#d12f6c,#ff7aa8);--butter:#ffd75e;--ok:#2b7bff;--no:#e5383b;--line:light-dark(#e3dee0,#3a3541)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 "Baloo 2","Noto Sans TC",system-ui,sans-serif;overflow-x:clip;min-height:100vh;display:flex;flex-direction:column}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,select:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
+.top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:14px max(3vw,14px)}
+.top h1{margin:0;font-size:22px;line-height:1.1;font-weight:800;margin-inline-end:auto}
+.top h1 small{display:block;font:500 14px "Noto Sans TC",sans-serif;color:var(--mute)}
+.mus{min-height:44px;padding:0 16px;border-radius:22px;background:var(--ink);color:var(--card);font:700 15px "Noto Sans TC",sans-serif}
+.mus[aria-pressed=false]{background:var(--card);color:var(--mute);border:2px solid var(--line)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{min-height:44px;padding:0 16px;border-radius:22px;background:var(--card);border:2px solid var(--line);font-weight:700;font-family:"Noto Sans TC",sans-serif;font-size:15px}
+.tabs button[aria-pressed=true]{background:var(--berry);border-color:var(--berry);color:#fff}
+.set{display:flex;gap:8px;align-items:center;font:500 14px "Noto Sans TC",sans-serif;color:var(--mute)}
+.set select{font:inherit;font-size:16px;min-height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);padding:0 8px}
+.stage{flex:1;display:grid;place-items:center;padding:8px max(3vw,14px) 16px}
+.wrap{width:100%;max-width:1180px}
+.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font:700 16px "Noto Sans TC",sans-serif;color:var(--mute)}
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.dots button{pointer-events:none;width:16px;height:16px;border-radius:50%;background:var(--line);padding:0}
+.dots button.on{background:var(--berry);transform:scale(1.3)}.dots button.got{background:var(--ok)}
+/* 盲盒 */
+.boxv{display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px 0 20px}
+.boxbtn{width:min(360px,72vw);aspect-ratio:1;border-radius:24px}
+.boxbtn svg{width:100%;height:100%;overflow:visible}
+.boxbtn:hover .bx{animation:wig .5s}
+.lid{transition:transform .45s cubic-bezier(.3,1.6,.5,1);transform-origin:120px 80px}
+.opening .lid{transform:translateY(-46px) rotate(-14deg)}
+@keyframes wig{25%{transform:rotate(-4deg)}75%{transform:rotate(4deg)}}
+.bx{transform-origin:120px 200px}
+.boxv p{margin:0;font:900 clamp(22px,3vw,30px) "Noto Sans TC",sans-serif}
+.boxv .sub{font:500 16px "Noto Sans TC",sans-serif;color:var(--mute)}
+/* 題目卡 */
+.card{background:var(--card);border-radius:28px;padding:clamp(18px,3vw,36px);box-shadow:0 10px 0 var(--line);position:relative}
+.kind{display:inline-flex;gap:8px;align-items:center;font:700 15px "Noto Sans TC",sans-serif;color:var(--berryd)}
+.secret{animation:pop .6s;background:var(--butter);color:#3b1530;border-radius:20px;padding:2px 12px;font-weight:900}
+.timer{position:absolute;top:clamp(14px,2.4vw,28px);inset-inline-end:clamp(14px,2.4vw,28px);width:84px;height:84px;border-radius:50%;background:var(--bg);border:4px solid var(--berry);display:grid;place-items:center;overflow:hidden;font-size:38px;font-weight:800}
+.timer span{position:relative;z-index:1}
+.timer i{position:absolute;inset:auto 0 0 0;background:light-dark(#e9e5e2,#3a3541);transition:height 1s linear}
+.timer.low{border-color:var(--no);color:var(--no);animation:pulse 1s infinite}
+.timer.paused{opacity:.7}.timer.paused span::after{content:"⏸";font-size:16px;display:block;line-height:1}
+.card .kind,.card .prompt{padding-inline-end:100px}
+.prompt{margin:8px 0 4px;font-size:clamp(30px,4.4vw,52px);line-height:1.15;font-weight:800;text-wrap:balance;font-family:"Baloo 2","Noto Sans TC",sans-serif}
+.prompt .gap{display:inline-block;min-width:3.2em;border-bottom:5px solid var(--berry);color:var(--berry)}
+.ask{margin:0;font:500 clamp(17px,1.8vw,21px) "Noto Sans TC",sans-serif;color:var(--mute)}
+.card.sit .prompt{font:900 clamp(32px,4.4vw,52px)/1.2 "Noto Sans TC",sans-serif;color:var(--ink);margin-top:12px;text-wrap:balance}
+.card.sit .ask{font:900 clamp(32px,4.4vw,52px)/1.15 "Noto Sans TC",sans-serif;color:light-dark(#ff0000,#ff4d4d);text-wrap:balance}
+.hintrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+.hintbtn{min-height:44px;padding:0 16px;border-radius:22px;border:2px dashed var(--berry);color:var(--berryd);font:700 16px "Noto Sans TC",sans-serif}
+.zh{font:700 clamp(18px,2vw,24px) "Noto Sans TC",sans-serif;background:light-dark(#fff4c7,#4a3a12);padding:6px 14px;border-radius:12px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:22px}
+.opt{position:relative;display:flex;align-items:center;gap:14px;min-height:84px;padding:12px 18px;border-radius:20px;background:var(--bg);border:3px solid var(--line);text-align:start;font-size:clamp(22px,2.6vw,32px);font-weight:700;line-height:1.2;transition:transform .15s}
+.opt:hover:not(:disabled){transform:translateY(-3px);border-color:var(--berry)}
+.opt b{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--card);font-size:24px}
+.opt:disabled{cursor:default}
+.opt.no{border-color:var(--no);opacity:.55}.opt.no b{background:var(--no)}
+.opt.ok{border-color:var(--ok);background:light-dark(#e3eeff,#14284d);animation:pulse .5s}.opt.ok b{background:var(--ok)}
+.opt .t{display:flex;flex-direction:column;gap:2px}
+.gl{font:700 clamp(16px,1.7vw,21px)/1.3 "Noto Sans TC",sans-serif;color:var(--mute)}
+.opt.no .gl{color:inherit}
+.mark{position:absolute;inset-inline-end:16px;font:900 46px/1 "Noto Sans TC",sans-serif}
+.ok .mark{color:var(--ok)}.no .mark{color:var(--no)}
+@keyframes pop{0%{transform:scale(.3) rotate(-10deg)}60%{transform:scale(1.25) rotate(4deg)}}
+@keyframes pulse{50%{transform:scale(1.05)}}
+.fb{margin-top:18px;min-height:56px;padding:12px 18px;border-radius:16px;font:700 clamp(17px,1.9vw,22px)/1.5 "Noto Sans TC",sans-serif}
+.fb.no{background:light-dark(#ffe4e4,#4a1719);color:light-dark(#9b1c1f,#ffb3b4)}
+.fb.ok{background:light-dark(#e3eeff,#14284d);color:light-dark(#123f8f,#b9d3ff)}
+.fb:empty{background:none}
+.award{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;font:700 16px "Noto Sans TC",sans-serif}
+.adv{position:relative;display:flex;align-items:center;gap:12px;margin-top:12px;font:700 16px "Noto Sans TC",sans-serif;color:var(--mute);padding-bottom:8px}
+.adv button{min-height:44px;padding:0 16px;border-radius:22px;border:2px solid var(--line);font-size:15px}
+.adv i{position:absolute;left:0;bottom:0;height:4px;border-radius:2px;background:var(--berry);width:100%;transform-origin:left;animation:shrink var(--d) linear forwards}
+@keyframes shrink{to{transform:scaleX(0)}}
+.award button{min-height:48px;padding:0 18px;border-radius:24px;background:var(--butter);color:#3b1530;font-weight:900}
+.ctl{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:18px}
+.ctl button{min-height:50px;padding:0 22px;border-radius:25px;font:700 17px "Noto Sans TC",sans-serif;background:var(--card);border:2px solid var(--line)}
+.ctl button:disabled{opacity:.35;cursor:not-allowed}
+.ctl .go{background:var(--berry);border-color:var(--berry);color:#fff}
+.teams{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:12px max(3vw,14px) 18px;background:light-dark(#e9e5e2,#1e1b22)}
+.team{display:flex;align-items:center;gap:8px;background:var(--card);border-radius:18px;padding:8px 12px}
+.team .n{font:700 15px "Noto Sans TC",sans-serif;margin-inline-end:auto;white-space:nowrap}
+.team .s{font-size:34px;font-weight:800;line-height:1;min-width:1.4em;text-align:center}
+.team .s.bump{animation:pulse .5s}
+.team button{width:44px;height:44px;border-radius:50%;background:var(--bg);font-size:22px;font-weight:800}
+.note{font:500 13px "Noto Sans TC",sans-serif;color:var(--mute);text-align:center;margin:10px 0 0}
+.start{position:fixed;inset:0;z-index:9;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);text-align:center;padding:20px}
+.start .big{margin:0 0 6px;font-size:clamp(32px,5vw,52px);font-weight:800;line-height:1.1}
+.start p{margin:0 0 22px;font:500 18px "Noto Sans TC",sans-serif;color:var(--mute)}
+.start p.big{color:var(--ink);font:800 clamp(32px,5vw,52px)/1.1 "Baloo 2","Noto Sans TC",sans-serif;margin-bottom:8px}
+.start button{min-height:64px;padding:0 40px;border-radius:32px;background:var(--berry);color:#fff;font:900 26px "Noto Sans TC",sans-serif;box-shadow:0 6px 0 var(--berryd)}
+/* 成績 */
+.res{background:var(--card);border-radius:28px;padding:clamp(18px,3vw,36px);box-shadow:0 10px 0 var(--line)}
+.res h2{margin:0;font:900 clamp(28px,3.6vw,40px)/1.15 "Noto Sans TC",sans-serif}
+.res .msg{margin:6px 0 0;font:700 18px "Noto Sans TC",sans-serif;color:var(--mute)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0}
+.stat{background:var(--bg);border-radius:18px;padding:14px 16px}
+.stat b{display:block;font:800 clamp(30px,4vw,46px)/1 "Baloo 2",sans-serif;font-variant-numeric:tabular-nums}
+.stat span{font:700 15px "Noto Sans TC",sans-serif;color:var(--mute)}
+.stat.big b{color:var(--berryd)}
+.rbtns{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 6px}
+.rbtns button{min-height:52px;padding:0 24px;border-radius:26px;font:900 18px "Noto Sans TC",sans-serif;border:2px solid var(--line);background:var(--card)}
+.rbtns .go{background:var(--berry);border-color:var(--berry);color:#fff}
+.log{width:100%;border-collapse:collapse;margin-top:14px;font:500 16px "Noto Sans TC",sans-serif}
+.log th{text-align:start;font-weight:700;color:var(--mute);font-size:14px;padding:8px;border-bottom:2px solid var(--line)}
+.log td{padding:8px;border-bottom:1px solid var(--line)}
+.log td.n{text-align:end;font-variant-numeric:tabular-nums;white-space:nowrap}
+.log .w{font:700 18px "Baloo 2",sans-serif}
+.log td:nth-child(4){white-space:nowrap}
+@media(max-width:600px){.log{font-size:14px}.log .w{font-size:16px}.log th,.log td{padding:6px 4px}}
+.r-ok{color:var(--ok);font-weight:900}.r-no{color:var(--no);font-weight:900}.r-late{color:var(--mute);font-weight:900}
+details.rev{margin-top:10px}details.rev summary{cursor:pointer;font:700 16px "Noto Sans TC",sans-serif;min-height:44px;display:flex;align-items:center}
+/* 證書 */
+.cert{position:relative;margin:8px 0 0;padding:clamp(22px,4vw,48px) clamp(18px,4vw,56px);background:#fff;color:#1d1a24;border:3px solid #b8860b;outline:1px solid #b8860b;outline-offset:-12px;border-radius:6px;text-align:center;font-family:"Noto Serif TC",serif;box-shadow:0 18px 40px -18px rgba(0,0,0,.35)}
+.cert .seal{position:absolute;top:clamp(12px,2vw,24px);inset-inline-end:clamp(12px,2vw,28px);width:clamp(76px,10vw,110px)}
+.cert .ct{margin:0;font-weight:900;font-size:clamp(34px,5vw,56px);letter-spacing:.12em;color:#8a6200;line-height:1.1}
+.cert .ce{margin:4px 0 22px;font:600 clamp(14px,1.6vw,18px) "Baloo 2",sans-serif;color:#8a6200}
+.cert .cb{margin:0 auto;max-width:34em;font-weight:700;font-size:clamp(17px,2vw,22px);line-height:2}
+.cert input{font:900 clamp(20px,2.4vw,28px) "Noto Serif TC",serif;color:#1d1a24;background:transparent;border:0;border-bottom:2px solid #1d1a24;width:7em;text-align:center;padding:0 4px}
+.cert input.no{width:3.2em}
+.cert input:focus-visible{outline:3px solid var(--ok);outline-offset:2px}
+.cert .cs{display:flex;justify-content:center;flex-wrap:wrap;gap:clamp(16px,4vw,48px);margin:22px 0 10px}
+.cert .cs b{display:block;font:800 clamp(30px,4vw,44px)/1 "Baloo 2",sans-serif;color:#1d1a24}
+.cert .cs span{font-size:14px;color:#6b6570}
+.ctab{margin:20px auto 6px;border-collapse:collapse;font:700 clamp(15px,1.8vw,19px) "Noto Serif TC",serif;min-width:min(100%,460px)}
+.ctab th{font-size:14px;color:#6b6570;padding:6px 12px;border-bottom:2px solid #b8860b}
+.ctab td{padding:8px 12px;border-bottom:1px solid #e8dcc0;text-align:start}
+.ctab td.n{text-align:end;font-family:"Baloo 2",sans-serif;font-size:1.15em;white-space:nowrap}
+.ctab tfoot td{border-bottom:0;border-top:2px solid #b8860b;font-weight:900;color:#8a6200}
+.cert .cd{margin:14px 0 0;font-size:16px;color:#6b6570}
+.cert .cw{margin:16px auto 0;max-width:36em;font-size:clamp(15px,1.8vw,18px);line-height:1.7;color:#1d1a24}.cert .nw{white-space:nowrap}.cert .cw b{color:#c0392b}
+.weak{margin-top:22px;padding:18px 20px;border-radius:20px;background:light-dark(#fff1f0,#3a1c1c);border:2px solid light-dark(#f5c2bf,#6b2f2f)}
+.weak h3{margin:0 0 10px;font:900 22px "Noto Sans TC",sans-serif;color:light-dark(#b3261e,#ff8a80)}
+.weak ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.weak li{background:var(--card);border-radius:12px;padding:10px 14px;display:flex;flex-direction:column}
+.weak .w{font:800 20px "Baloo 2",sans-serif}.weak li span:last-child{font:700 15px "Noto Sans TC",sans-serif;color:var(--mute)}
+.tip{font:500 14px "Noto Sans TC",sans-serif;color:var(--mute);margin:10px 0 0}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.cert .seal{position:static;margin:0 auto 6px;display:block}}
+[hidden]{display:none!important}
+@media(max-width:600px){.timer{width:64px;height:64px;font-size:28px}.card .kind,.card .prompt{padding-inline-end:72px}.team{gap:4px;padding:8px}.team .s{font-size:28px}.team button{width:40px;height:40px}.opts{grid-template-columns:minmax(0,1fr)}.opt{min-height:64px}.top h1{width:100%}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>More than Cute 字彙盲盒<small>B5L5-01｜第五冊 Lesson 5｜Words &amp; Phrases</small></h1>
+  <div class="tabs" id="tabs"></div>
+  
+  
+</header>
+
+<main class="stage"><div class="wrap">
+  <div class="meta"><span id="pos"></span><div class="dots" id="dots"></div></div>
+
+
+  <section class="card" id="qv">
+    <button class="timer" id="timer" aria-label="暫停或繼續倒數"><span id="tnum"></span><i id="tbar"></i></button>
+    <div class="kind"><span id="kind"></span></div>
+    <p class="prompt" id="prompt"></p>
+    <p class="ask" id="ask"></p>
+    <div class="hintrow"><button class="hintbtn" id="hintbtn">看中文提示</button><span class="zh" id="zh" hidden></span></div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb" aria-live="polite"></div>
+    
+    <div class="adv" id="adv" hidden><span><b id="advn"></b> 秒後自動下一題</span><button id="stay">停在這題</button><i id="advbar"></i></div>
+  </section>
+
+  <section class="res" id="rv" hidden></section>
+
+  <nav class="ctl" id="ctl">
+    <span></span>
+    <button class="go" id="next">下一題 →</button>
+  </nav>
+  <p class="note">鍵盤：1–4 選答案。</p>
+</div></main>
+
+<div class="start" id="start"><div><p class="big">More than Cute 字彙盲盒</p><p>每題 10 秒，時間到自動下一題</p><button id="go">開始遊戲 ▶</button></div></div>
+
+
+<script>
+{
+// 每題第一個選項是正確答案（顯示時會打亂）。[選項, 說明]
+const R=[
+{name:'第一關 情境猜單字',qs:[
+ {p:'明天段考，課本還沒翻開⋯⋯',a:'你現在最大的感覺是？',o:[['stress','stress = 壓力。Students often feel a lot of stress before exams.'],['relief','relief 是「鬆一口氣」——那是考完才會有的啦！'],['charm','charm 是「小吊飾；魅力」。段考前你覺得很有魅力？'],['trend','trend 是「趨勢」。不讀書不能變成趨勢喔。']]},
+ {p:'老師說：「今天不考小考。」',a:'全班的感覺是？',o:[['relief','relief = 鬆一口氣、解脫。'],['stress','stress 是「壓力」。不考試還有壓力？你是認真的嗎！'],['hardship','hardship 是「困難」。不考試哪裡困難了？'],['influence','influence 是「影響力」。']]},
+ {p:'每天陪你睡覺的那隻馬鈴薯玩偶',a:'它是你的⋯⋯？',o:[['companion','companion = 夥伴。課文：玩偶像 companions 一樣陪著我們。'],['hardship','hardship 是「困難」。說它是你的困難，它會哭喔。'],['conversation','conversation 是「談話」。除非你的玩偶會講話⋯⋯'],['discussion','discussion 是「討論」。跟玩偶開會討論？']]},
+ {p:'全校突然每個人書包都掛一隻 Labubu',a:'這是一種⋯⋯？',o:[['trend','trend = 趨勢。cute 是現在年輕人的 trend！'],['hardship','hardship 是「困難」。荷包的困難也許有啦。'],['comfort','comfort 是「安慰」。'],['individual','individual 是「個人」，全校一起掛就不是個人了。']]},
+ {p:'Lisa 拿著 Labubu 上鏡頭，隔天全台賣光。',a:'這就是名人的⋯⋯？',o:[['influence','influence = 影響力。課文：celebrity influence 名人影響力。'],['relief','relief 是「解脫」。買不到的人一點都不 relief。'],['conversation','conversation 是「談話」。'],['companion','companion 是「夥伴」。Lisa 不是你的夥伴（應該吧）。']]},
+ {p:'包包上掛了七個小吊飾，走路叮叮噹噹',a:'這些小吊飾英文叫？',o:[['charms','charm = 小飾物。bag charms 包包吊飾。'],['trends','trend 是「趨勢」。'],['stresses','stress 是「壓力」。七個壓力掛在包包上，太重了吧！'],['individuals','individual 是「個人」。包包上掛七個人？']]},
+ {p:'失戀了，朋友陪你吃宵夜、聽你哭',a:'朋友給你的是⋯⋯？',o:[['comfort','comfort = 安慰。'],['stress','stress 是「壓力」。這種朋友可以絕交了。'],['trend','trend 是「趨勢」。失戀不是趨勢啦。'],['charm','charm 是「魅力」，雖然朋友可能很有魅力。']]},
+ {p:'盲盒價格一夕之間從 300 漲到 3000',a:'價格上漲得很⋯⋯？',o:[['sharply','sharply = 急劇地。prices rose sharply。'],['playful','playful 是「有趣的」。漲價一點都不有趣！'],['nowadays','nowadays 是「現今」。'],['major','major 是「主要的」。']]},
+ {p:'頭痛到不行，吃了藥之後好多了',a:'藥把頭痛⋯⋯了？',o:[['eased','ease = 緩解、減輕。The medicine eased the pain.'],['raised','raise 是「提出」。藥把頭痛「提出來」？好恐怖。'],['discussed','discuss 是「討論」。藥不會跟頭痛討論。'],['influenced','influence 是「影響」。藥「影響」了頭痛，不夠精準，要用 eased。']]},
+ {p:'一直盯著櫥窗裡的隱藏版，眼睛都不眨',a:'這叫做⋯⋯？',o:[['fix one’s eyes on','fix one’s eyes on = 盯著看。'],['be faced with','be faced with 是「面臨」。'],['on top of that','on top of that 是「除此之外」。'],['as a result of','as a result of 是「由於」。']]}
+]},
+{"name": "第二關 課本例句（一）", "qs": [{"p": "My sister loves collecting panda ___ for her handbags.", "z": "我姊姊喜愛蒐集手提袋用的貓熊吊飾。", "o": [["charms", "charms = 小飾物（複數）。"], ["trends", "trends 是「趨勢（複數）」，放進句子意思不通。"], ["companions", "companions 是「夥伴（複數）」，放進句子意思不通。"], ["individuals", "individuals 是「個人（複數）」，放進句子意思不通。"]]}, {"p": "Tony has a ___ smile that attracts girls everywhere he goes.", "z": "Tony 擁有迷人的微笑，不論到哪裡都吸引女孩子。", "o": [["charming", "charming = 迷人的。"], ["considerable", "considerable 是「相當多的」，放進句子意思不通。"], ["major", "major 是「主要的」，放進句子意思不通。"], ["fashionable", "fashionable 是「流行的」，放進句子意思不通。"]]}, {"p": "The current ___ is to use less plastic to help the environment.", "z": "目前的趨勢是使用較少的塑膠來幫助環境。", "o": [["trend", "trend = 趨勢。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["companion", "companion 是「夥伴」，放進句子意思不通。"], ["conversation", "conversation 是「談話」，放進句子意思不通。"]]}, {"p": "Do not hesitate to ___ your questions about the Statue of Liberty at the end of my talk.", "z": "在我的發言結束後，不要猶豫地提出有關自由女神像的問題。", "o": [["raise", "raise = 提出。"], ["ease", "ease 是「緩解；減輕」，放進句子意思不通。"], ["influence", "influence 是「影響力；影響」，放進句子意思不通。"], ["comfort", "comfort 是「安慰；舒適」，放進句子意思不通。"]]}, {"p": "I found ___ in listening to soft music.", "z": "我在聆聽輕柔的音樂中找到安慰。", "o": [["comfort", "comfort = 安慰；舒適。"], ["stress", "stress 是「壓力」，放進句子意思不通。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["trend", "trend 是「趨勢」，放進句子意思不通。"]]}, {"p": "___, athletes have better training conditions but still train hard to achieve excellence in their sports.", "z": "現今，運動員有較好的訓練環境，但是仍然在他們的運動中努力訓練以達到卓越表現。", "o": [["Nowadays", "Nowadays = 現今。"], ["Sharply", "Sharply 是「急劇地」，放進句子意思不通。"], ["Considerable", "Considerable 是「相當多的」，放進句子意思不通。"], ["Playful", "Playful 是「有趣的」，放進句子意思不通。"]]}, {"p": "There is ___ evidence to show that climate change is speeding up.", "z": "有相當多的證據顯示氣候變遷正在加速進行。", "o": [["considerable", "considerable = 相當多的。"], ["playful", "playful 是「有趣的」，放進句子意思不通。"], ["charming", "charming 是「迷人的」，放進句子意思不通。"], ["fashionable", "fashionable 是「流行的」，放進句子意思不通。"]]}, {"p": "Students often feel a lot of ___ before final exams.", "z": "學生經常在期末考前感到很大的壓力。", "o": [["stress", "stress = 壓力。"], ["fashion", "fashion 是「時尚；流行款式」，放進句子意思不通。"], ["charm", "charm 是「小飾物；魅力」，放進句子意思不通。"], ["trend", "trend 是「趨勢」，放進句子意思不通。"]]}, {"p": "Maggie has been a great ___ for seniors who live alone in our neighborhood.", "z": "Maggie 一直是我們社區裡獨居年長者的好夥伴。", "o": [["companion", "companion = 夥伴。"], ["conversation", "conversation 是「談話」，放進句子意思不通。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["trend", "trend 是「趨勢」，放進句子意思不通。"]]}, {"p": "The students felt a sense of ___ when the teacher told them they had not broken any school rules.", "z": "當老師告訴學生們他們沒有違反校規時，他們都鬆了一口氣。", "o": [["relief", "relief = 解脫；鬆一口氣。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["influence", "influence 是「影響力；影響」，放進句子意思不通。"], ["fashion", "fashion 是「時尚；流行款式」，放進句子意思不通。"]]}, {"p": "I believe that small acts of kindness can make a difference to people who try to overcome ___.", "z": "我相信小小的善行可以為努力克服困難的人們帶來改變。", "o": [["hardships", "hardships = 困難（複數）。"], ["charms", "charms 是「小飾物（複數）」，放進句子意思不通。"], ["trends", "trends 是「趨勢（複數）」，放進句子意思不通。"], ["conversations", "conversations 是「談話（複數）」，放進句子意思不通。"]]}, {"p": "The manager plans to ___ various topics during the meeting.", "z": "經理計畫在會議中討論各種不同的主題。", "o": [["discuss", "discuss = 討論。"], ["ease", "ease 是「緩解；減輕」，放進句子意思不通。"], ["comfort", "comfort 是「安慰；舒適」，放進句子意思不通。"], ["relief", "relief 是「解脫；鬆一口氣」，放進句子意思不通。"]]}, {"p": "The proposal to build a new park is under ___ by the city government.", "z": "興建新公園的提案正在市政府討論中。", "o": [["discussion", "discussion = 討論。"], ["conversation", "conversation 是「談話」，放進句子意思不通。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["relief", "relief 是「解脫；鬆一口氣」，放進句子意思不通。"]]}, {"p": "Every ___ has the right to freedom of speech.", "z": "每個人都有言論自由。", "o": [["individual", "individual = 個人。"], ["trend", "trend 是「趨勢」，放進句子意思不通。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"], ["conversation", "conversation 是「談話」，放進句子意思不通。"]]}, {"p": "The gym provides each member with an ___ locker.", "z": "這間健身房提供給每位會員個別的置物櫃。", "o": [["individual", "individual = 個人；個別的。"], ["considerable", "considerable 是「相當多的」，放進句子意思不通。"], ["charming", "charming 是「迷人的」，放進句子意思不通。"], ["fashionable", "fashionable 是「流行的」，放進句子意思不通。"]]}]}, {"name": "第三關 課本例句（二）", "fill": 15, "from": 1, "qs": [{"p": "The safety of their children is a ___ concern for parents.", "z": "對父母來說，孩子的安全是主要的擔憂。", "o": [["major", "major = 主要的。"], ["playful", "playful 是「有趣的」，放進句子意思不通。"], ["charming", "charming 是「迷人的」，放進句子意思不通。"], ["fashionable", "fashionable 是「流行的」，放進句子意思不通。"]]}, {"p": "Famous actors often have great ___ over what young people wear.", "z": "知名演員經常對年輕人的穿著有很大的影響力。", "o": [["influence", "influence = 影響力；影響。"], ["stress", "stress 是「壓力」，放進句子意思不通。"], ["relief", "relief 是「解脫；鬆一口氣」，放進句子意思不通。"], ["companion", "companion 是「夥伴」，放進句子意思不通。"]]}, {"p": "Emma’s trip abroad has greatly ___ her decision to study languages.", "z": "Emma 的海外旅行大大地影響了她要學習語言的決定。", "o": [["influenced", "influenced = 影響（influence 過去分詞）。"], ["eased", "eased 是「緩解（ease 過去分詞）」，放進句子意思不通。"], ["raised", "raised 是「提出（raise 過去分詞）」，放進句子意思不通。"], ["discussed", "discussed 是「討論（discuss 過去分詞）」，放進句子意思不通。"]]}, {"p": "Natural resources in this country have decreased ___ due to the development of industry.", "z": "由於工業的發展，這個國家的天然資源已經急劇地減少。", "o": [["sharply", "sharply = 急劇地。"], ["nowadays", "nowadays 是「現今」，放進句子意思不通。"], ["playful", "playful 是「有趣的」，放進句子意思不通。"], ["considerable", "considerable 是「相當多的」，放進句子意思不通。"]]}, {"p": "Jason has a great sense of humor and can make awkward moments ___.", "z": "Jason 有很好的幽默感，可以把尷尬的時刻變得有趣。", "o": [["playful", "playful = 有趣的。"], ["considerable", "considerable 是「相當多的」，放進句子意思不通。"], ["major", "major 是「主要的」，放進句子意思不通。"], ["individual", "individual 是「個人」，放進句子意思不通。"]]}, {"p": "Jeans have not gone out of ___ for several generations.", "z": "牛仔褲好幾個世代以來都沒有退流行。", "o": [["fashion", "fashion = 時尚；流行款式。"], ["comfort", "comfort 是「安慰；舒適」，放進句子意思不通。"], ["stress", "stress 是「壓力」，放進句子意思不通。"], ["hardship", "hardship 是「困難」，放進句子意思不通。"]]}, {"p": "In the 1920s, short hair and hats were very ___ among women.", "z": "在 1920 年代，短髮和帽子在女性之間非常流行。", "o": [["fashionable", "fashionable = 流行的。"], ["considerable", "considerable 是「相當多的」，放進句子意思不通。"], ["individual", "individual 是「個人；個別的」，放進句子意思不通。"], ["major", "major 是「主要的」，放進句子意思不通。"]]}, {"p": "You had better take some medicine to ___ the pain.", "z": "你最好服點藥來緩解疼痛。", "o": [["ease", "ease = 緩解；減輕。"], ["raise", "raise 是「提出」，放進句子意思不通。"], ["discuss", "discuss 是「討論」，放進句子意思不通。"], ["influence", "influence 是「影響力；影響」，放進句子意思不通。"]]}, {"p": "Dan and I had a great ___ about our favorite movies over lunch.", "z": "Dan 和我在午餐時聊得很愉快，話題是關於我們最喜歡的電影。", "o": [["conversation", "conversation = 談話。"], ["companion", "companion 是「夥伴」，放進句子意思不通。"], ["comfort", "comfort 是「安慰；舒適」，放進句子意思不通。"], ["relief", "relief 是「解脫；鬆一口氣」，放進句子意思不通。"]]}, {"p": "Everyone in the audience ___ their eyes on the magician performing tricks on the stage.", "z": "每位觀眾都盯著看舞臺上的那位魔術師表演把戲。", "o": [["fixed", "fixed = 盯著（fix one’s eyes on）。"], ["raised", "raised 是「提出（raise 過去式）」，放進句子意思不通。"], ["eased", "eased 是「緩解（ease 過去式）」，放進句子意思不通。"], ["discussed", "discussed 是「討論（discuss 過去式）」，放進句子意思不通。"]]}, {"p": "Jasper is ___ coffee and is thinking about opening a café of his own.", "z": "Jasper 對咖啡很著迷，而且正在思考開一家自己的咖啡店。", "o": [["crazy about", "crazy about = 對⋯⋯著迷。"], ["faced with", "faced with 是「面臨」，放進句子意思不通。"], ["as a result of", "as a result of 是「由於」，放進句子意思不通。"], ["on top of that", "on top of that 是「除此之外」，放進句子意思不通。"]]}, {"p": "Our family business is ___ challenges from large online shops.", "z": "我們的家族企業正面臨來自於大型網路商店的挑戰。", "o": [["faced with", "faced with = 面臨。"], ["crazy about", "crazy about 是「對⋯⋯著迷」，放進句子意思不通。"], ["as a result of", "as a result of 是「由於」，放進句子意思不通。"], ["on top of that", "on top of that 是「除此之外」，放進句子意思不通。"]]}, {"p": "Our sales increased ___ our excellent customer service.", "z": "由於優異的客戶服務，我們的銷售增加了。", "o": [["as a result of", "as a result of = 由於。"], ["on top of that", "on top of that 是「除此之外」，放進句子意思不通。"], ["crazy about", "crazy about 是「對⋯⋯著迷」，放進句子意思不通。"], ["faced with", "faced with 是「面臨」，放進句子意思不通。"]]}, {"p": "The tea was delicious, and ___, the cake was amazing.", "z": "茶很美味，除此之外，蛋糕也很棒。", "o": [["on top of that", "on top of that = 除此之外。"], ["as a result of", "as a result of 是「由於」，放進句子意思不通。"], ["nowadays", "nowadays 是「現今」，放進句子意思不通。"], ["sharply", "sharply 是「急劇地」，放進句子意思不通。"]]}]}];
+const CHEER=['Nice！','太神啦！','抽到好運！','完美！','Excellent！'],OOPS=['差一點點！','沒抽中，','嗚嗚，','再接再厲！'];
+
+const GL={"charming":"迷人的","considerable":"相當多的","major":"主要的","fashionable":"流行的","individual":"個人；個別的","discussion":"討論","conversation":"談話","hardship":"困難","relief":"解脫；鬆一口氣","influenced":"影響（influence 過去分詞）","eased":"緩解（ease 過去分詞）","raised":"提出（raise 過去分詞）","discussed":"討論（discuss 過去分詞）","charm":"小飾物；魅力","charms":"小飾物（複數）","trends":"趨勢（複數）","companions":"夥伴（複數）","individuals":"個人（複數）","trend":"趨勢","hardship":"困難","companion":"夥伴","conversation":"談話","raise":"提出","ease":"緩解；減輕","influence":"影響力；影響","comfort":"安慰；舒適","stress":"壓力","nowadays":"現今","sharply":"急劇地","considerable":"相當多的","playful":"有趣的","charming":"迷人的","fashionable":"流行的","fashion":"時尚；流行款式","relief":"解脫；鬆一口氣","hardships":"困難（複數）","conversations":"談話（複數）","discuss":"討論","individual":"個人","major":"主要的","fixed":"盯著（fix one’s eyes on）","raised":"提出（raise 過去式）","eased":"緩解（ease 過去式）","discussed":"討論（discuss 過去式）","crazy about":"對⋯⋯著迷","faced with":"面臨","as a result of":"由於","on top of that":"除此之外","charm":"小飾物；魅力","charms":"小飾物（複數）","trends":"趨勢（複數）","companions":"夥伴（複數）","trend":"趨勢","hardship":"困難","companion":"夥伴","conversation":"談話","conversations":"談話（複數）","raise":"提出","ease":"緩解；減輕","influence":"影響力；影響","comfort":"安慰；舒適","stress":"壓力","nowadays":"現今","sharply":"急劇地","considerable":"相當多的","playful":"有趣的","fashionable":"流行的","fashion":"時尚；流行款式","relief":"解脫；鬆一口氣","hardships":"困難（複數）","discuss":"討論","individual":"個人","major":"主要的","fixed":"盯著（fix one’s eyes on）","raised":"提出（raise 過去式）","eased":"緩解（ease 過去式）","discussed":"討論（discuss 過去式）","crazy about":"對⋯⋯著迷","faced with":"面臨","as a result of":"由於","on top of that":"除此之外","rise":"上升（不及物動詞）","comfortable":"舒適的（形容詞）","stressful":"有壓力的（形容詞）","relieve":"減輕（動詞）","affect":"影響（動詞）","charm":"小飾物；魅力","charms":"小飾物（複數）","trends":"趨勢（複數）","companions":"夥伴（複數）","individuals":"個人（複數）","trend":"趨勢","hardship":"困難","companion":"夥伴","conversation":"談話","raise":"提出","ease":"緩解；減輕","influence":"影響力；影響","comfort":"安慰；舒適","stress":"壓力","nowadays":"現今","sharply":"急劇地","considerable":"相當多的","playful":"有趣的","charming":"迷人的","fashionable":"流行的","fashion":"時尚；流行款式","relief":"解脫；鬆一口氣","hardships":"困難（複數）","conversations":"談話（複數）","discuss":"討論","individual":"個人","major":"主要的","fixed":"盯著（fix one’s eyes on）","raised":"提出（raise 過去式）","eased":"緩解（ease 過去式）","discussed":"討論（discuss 過去式）","crazy about":"對⋯⋯著迷","faced with":"面臨","as a result of":"由於","on top of that":"除此之外",'stress':'壓力','relief':'解脫；鬆一口氣','charm':'小飾物；魅力','charms':'小飾物（複數）','trend':'趨勢','trends':'趨勢（複數）','hardship':'困難','influence':'影響力','companion':'夥伴','conversation':'談話','individual':'個人','individuals':'個人（複數）','comfort':'安慰；舒適','stresses':'壓力（複數）','playful':'有趣的','nowadays':'現今','major':'主要的','sharply':'急劇地','eased':'緩解（ease 過去式）','ease':'緩解；減輕','raised':'提出（raise 過去式）','raise':'提出','rise':'上升（不能接受詞）','discussed':'討論（discuss 過去式）','discuss':'討論','fixed':'盯著（fix one’s eyes on）','fix':'修理；固定','fix one’s eyes on':'盯著看','be faced with':'面臨','faced with':'面臨','on top of that':'除此之外','on top of':'在⋯⋯上面（少了 that）','as a result of':'由於','crazy about':'對⋯⋯著迷','fixed on':'盯著（fix one’s eyes on）','considerable':'相當多的','fashion':'時尚；流行款式','fashionable':'流行的','discussion':'討論','influenced':'影響（influence 過去式）','charming':'迷人的',"individual":"個人；個別的"};
+const $=id=>document.getElementById(id), L='ABCD';
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+// 打亂選項，並在每關抽兩題當隱藏版
+R.forEach(r=>{r.base=JSON.parse(JSON.stringify(r.qs))});
+function buildQs(r){let l=r.base.map(q=>JSON.parse(JSON.stringify(q)));if(r.fill&&l.length<r.fill){const ex=shuf(R[r.from].base).slice(0,r.fill-l.length);l=l.concat(ex.map(q=>JSON.parse(JSON.stringify(q))))}return shuf(l)}
+R.forEach(r=>{r.qs=buildQs(r);const sec=shuf(r.qs.map((_,i)=>i)).slice(0,2);r.qs.forEach((q,i)=>{q.ord=shuf([0,1,2,3]);q.sec=sec.includes(i);q.st={open:true,tried:[],done:false,paid:false,hint:false}})});
+
+let st={r:0,i:0,n:4,t:10,view:'q',sc:[0,0,0,0,0,0]},left=0,tick=null,paused=false;
+try{const s=JSON.parse(localStorage.getItem('b5l5q')||'null');if(s&&Array.isArray(s.sc))st.n=s.n,st.sc=s.sc}catch(e){}
+const save=()=>{try{localStorage.setItem('b5l5q',JSON.stringify({n:st.n,sc:st.sc}))}catch(e){}};
+
+
+
+const cur=()=>R[st.r].qs[st.i];
+
+function stopT(){clearInterval(tick);tick=null}
+function drawT(){const s=cur().st,el=$('timer');el.hidden=true;if(el.hidden)return;
+  $('tnum').textContent=paused&&left===st.t?'▶':left;$('tbar').style.height=(100*(1-left/st.t))+'%';el.classList.toggle('low',left<=5&&!paused);el.classList.toggle('paused',paused)}
+let t0=0;
+function startT(){stopT();paused=false;left=st.t;t0=performance.now();if(!st.t||cur().st.done){drawT();return}drawT();
+  tick=setInterval(()=>{if(paused)return;left--;if(left<=0){stopT();clearAdv();go(1);return}drawT()},1000)}
+let adv=null,advLeft=0;
+function clearAdv(){clearInterval(adv);adv=null;$('adv').hidden=true}
+function autoNext(sec){clearAdv();advLeft=sec;const a=$('adv');a.hidden=false;$('advn').textContent=advLeft;
+  const bar=$('advbar');bar.style.setProperty('--d',sec+'s');bar.style.animation='none';void bar.offsetWidth;bar.style.animation='';
+  adv=setInterval(()=>{if(--advLeft<=0){clearAdv();go(1)}else $('advn').textContent=advLeft},1000)}
+function tabs(){$('tabs').innerHTML=R.map((r,k)=>`<button data-r="${k}" aria-pressed="${k===st.r}">${esc(r.name)}</button>`).join('')}
+function render(){
+  const r=R[st.r],q=cur(),s=q.st;
+  $('pos').textContent=`${r.name}｜第 ${st.i+1} / ${r.qs.length} 題`;
+  $('dots').innerHTML=r.qs.map((x,k)=>`<button data-i="${k}" class="${k===st.i?'on':x.st.done?'got':''}" aria-label="第${k+1}題"></button>`).join('');
+  
+  
+  if(!s.open)return;
+  $('qv').classList.toggle('sit',st.r===0);
+  $('kind').textContent=q.k||(st.r===0?'情境猜單字':'選出最適合的字');
+  
+  $('prompt').innerHTML=esc(q.p).replace('___','<span class="gap">　</span>');
+  $('ask').textContent=q.a||'';$('ask').hidden=!q.a;
+  const hint=q.z||'';
+  const showZh=!!hint&&s.done;$('hintbtn').hidden=true;$('zh').hidden=!showZh;$('zh').textContent=hint;
+  $('opts').innerHTML=q.ord.map((oi,k)=>{const ok=oi===0&&s.done,no=s.tried.includes(oi);
+    return `<button class="opt${ok?' ok':''}${no?' no':''}" data-o="${oi}" ${s.done||s.late||no?'disabled':''}><b>${L[k]}</b><span class="t">${esc(q.o[oi][0])}${s.done&&GL[q.o[oi][0].toLowerCase()]?`<small class="gl">${esc(GL[q.o[oi][0].toLowerCase()])}</small>`:''}</span>${ok?'<span class="mark">✓</span>':no?'<span class="mark">×</span>':''}</button>`}).join('');
+  const last=s.tried[s.tried.length-1];
+  const fb=$('fb');fb.className='fb';fb.textContent='';
+  if(s.wrong){fb.classList.add('no');fb.textContent='× '+OOPS[(st.i+st.r)%OOPS.length]+' '+q.o[last][1]+'　正確答案是 '+q.o[0][0]+'：'+q.o[0][1].replace(/^[^=]*= ?/,'')}
+  else if(s.late){fb.classList.add('no');fb.textContent='⏰ 時間到！答案是 '+q.o[0][0]+'：'+q.o[0][1].replace(/^[^=]*= ?/,'')}
+  else if(s.done){fb.classList.add('ok');fb.textContent='✓ '+(s.shown?'':(CHEER[(st.i+st.r)%CHEER.length])+' ')+q.o[0][1]}
+  else if(last!==undefined){fb.classList.add('no');fb.textContent='× '+OOPS[s.tried.length%OOPS.length]+' '+q.o[last][1]+'　再試一次！'}
+    }
+function nextState(){$('next').disabled=!cur().st.done}
+function pick(oi){const s=cur().st;if(s.done||s.late||s.tried.includes(oi))return;s.time=(performance.now()-t0)/1000;s.res=oi===0?'ok':'no';if(oi===0){s.done=true;stopT()}else{s.tried.push(oi);s.done=true;s.shown=true;s.wrong=true;stopT()}render();drawT();nextState();autoNext(2)}
+function go(d){clearAdv();if(st.view==='res')return;const s=cur().st;
+  if(!s.res){s.res='late';s.time=Math.min(st.t,(performance.now()-t0)/1000)}
+  if(st.i+1>=R[st.r].qs.length){stopT();showRes();return}
+  st.i++;render();startT();nextState()}
+function resetRound(r){R[r].qs=buildQs(R[r]);R[r].qs.forEach(q=>{q.ord=shuf([0,1,2,3]);q.st={open:true,tried:[],done:false}})}
+function startRound(r){clearAdv();stopT();resetRound(r);st.r=r;st.i=0;st.view='q';$('rv').hidden=true;$('qv').hidden=false;$('ctl').hidden=false;$('dots').hidden=false;tabs();render();startT();nextState()}
+const fmt=x=>x.toFixed(1);
+let cname='',cno='';try{cname=localStorage.getItem('b5l5name')||'';cno=localStorage.getItem('b5l5no')||''}catch(e){}
+const BASE={'charms':'charm','hardships':'hardship','fixed':"fix one's eyes on","fix one's eyes on":"fix one's eyes on",'crazy about':'be crazy about','faced with':'be faced with','be faced with':'be faced with','eased':'ease','raised':'raise','influenced':'influence'};
+const BGL={'charming':'迷人的','discussion':'討論','charm':'小飾物；魅力','trend':'趨勢','raise':'提出','comfort':'安慰；舒適','nowadays':'現今','considerable':'相當多的','stress':'壓力','companion':'夥伴','relief':'解脫；鬆一口氣','hardship':'困難','discuss':'討論','individual':'個人','major':'主要的','influence':'影響力；影響','sharply':'急劇地','playful':'有趣的','fashion':'時尚；流行款式','fashionable':'流行的','ease':'緩解；減輕','conversation':'談話',"fix one's eyes on":'盯著看','be crazy about':'對⋯⋯著迷','be faced with':'面臨','as a result of':'由於','on top of that':'除此之外'};
+function weak(){const m=new Map();R.forEach(r=>{if(!r.result)return;r.qs.forEach(q=>{if(q.st.res==='ok')return;const w=q.o[0][0].toLowerCase(),b=(BASE[w]||w).replace('’',"'");m.set(b,(m.get(b)||0)+1)})});return [...m.keys()]}
+function showRes(){
+  st.view='res';const r=R[st.r],qs=r.qs,n=qs.length,ok=qs.filter(q=>q.st.res==='ok').length;
+  const tot=qs.reduce((a,q)=>a+(q.st.time||0),0),score=Math.round(ok/n*100);
+  r.result={score,ok,n,tot};
+  const last=st.r===R.length-1,now=new Date(),p2=x=>String(x).padStart(2,'0'),date=`${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日 ${p2(now.getHours())}:${p2(now.getMinutes())}`;
+  $('qv').hidden=true;$('ctl').hidden=true;$('dots').hidden=true;$('pos').textContent=r.name+'｜成績';
+  const rows=qs.map((q,k)=>{const s=q.st,w=q.o[0][0],g=GL[w.toLowerCase()]||'',lab=s.res==='ok'?['r-ok','✓ 答對']:s.res==='no'?['r-no','× 答錯']:['r-late','— 未作答'];
+    return `<tr><td class="n">${k+1}</td><td><span class="w">${esc(w)}</span></td><td>${esc(g)}</td><td class="${lab[0]}">${lab[1]}</td><td class="n">${fmt(s.time||0)} 秒</td></tr>`}).join('');
+  const seal=`<svg class="seal" viewBox="0 0 120 140" aria-hidden="true"><path d="M38 80 26 136l20-10 12 16 8-56zM82 80l12 56-20-10-12 16-8-56z" fill="#c0392b"/><g transform="translate(60 58)">${Array.from({length:24},(_,k)=>`<path d="M0-52 6-44h-12z" fill="#d4a017" transform="rotate(${k*15})"/>`).join('')}<circle r="46" fill="#d4a017"/><circle r="38" fill="#f3d36b" stroke="#b8860b" stroke-width="2"/><path d="M0-22l6.5 13.2 14.6 2.1-10.6 10.3 2.5 14.5L0 11.3l-13 6.8 2.5-14.5L-21.1-6.7l14.6-2.1z" fill="#b8860b"/></g></svg>`;
+  const crow=R.map(x=>{const v=x.result;return `<tr><td>${esc(x.name.split(' ')[0])}</td><td class="n">${v?v.score+' 分':'未完成'}</td><td class="n">${v?v.ok+'/'+v.n:'—'}</td><td class="n">${v?fmt(v.tot)+' 秒':'—'}</td></tr>`}).join('');
+  const all=R.filter(x=>x.result),aok=all.reduce((a,x)=>a+x.result.ok,0),an=all.reduce((a,x)=>a+x.result.n,0),at=all.reduce((a,x)=>a+x.result.tot,0);
+  const wk=weak();
+  const cert=last?`<div class="cert">${seal}<p class="ct">完成證書</p><p class="ce">Certificate of Completion</p>
+  <p class="cb">茲證明 <input id="cno" class="no" value="${esc(cno)}" placeholder="座號" aria-label="座號" inputmode="numeric"> 號 <input id="cname" value="${esc(cname)}" placeholder="輸入姓名" aria-label="姓名"> 同學<br>完成 More than Cute 第五冊 Lesson 5 字彙挑戰</p>
+  <table class="ctab"><thead><tr><th>關卡</th><th>分數</th><th>答對</th><th>時間</th></tr></thead><tbody>${crow}</tbody>
+  <tfoot><tr><td>總計</td><td class="n">${an?Math.round(aok/an*100):0} 分</td><td class="n">${aok}/${an}</td><td class="n">${fmt(at)} 秒</td></tr></tfoot></table>
+  <p class="cw"><b>待加強：</b>${wk.length?wk.map(w=>`<span class="nw">${esc(w)}</span>`).join('、'):'全部答對，太厲害了！'}</p>
+  <p class="cd">遊戲編號 B5L5-01｜${date}</p></div><p class="tip">輸入座號和姓名後，截圖這張證書交給老師。</p>`:'';
+  $('rv').innerHTML=`<h2>${esc(r.name)} 完成！</h2>
+  <p class="msg">${last?'全部關卡完成，下面是你的完成證書。':'看看成績，準備進入下一關。'}</p>
+  <div class="stats"><div class="stat big"><b>${score}</b><span>分</span></div><div class="stat"><b>${ok}/${n}</b><span>答對題數</span></div><div class="stat"><b>${fmt(tot)}</b><span>總答題時間（秒）</span></div><div class="stat"><b>${fmt(tot/n)}</b><span>平均每題（秒）</span></div></div>
+  ${cert}
+  ${last&&wk.length?`<section class="weak"><h3>需要加強複習的單字片語（${wk.length} 個）</h3><ul>${wk.map(w=>`<li><span class="w">${esc(w)}</span><span>${esc(BGL[w]||'')}</span></li>`).join('')}</ul><p class="tip">把這些字片語再唸幾次、看看課本例句，然後按「再挑戰一次」。</p></section>`:''}
+  <div class="rbtns">${last?'':`<button class="go" id="nextround">下一關 →</button>`}<button id="retry">再挑戰一次</button></div>
+  <details class="rev" ${last?'':'open'}><summary>答題紀錄（每題結果與時間）</summary><div class="scroll"><table class="log"><thead><tr><th>題</th><th>答案</th><th>中文</th><th>結果</th><th>用時</th></tr></thead><tbody>${rows}</tbody></table></div></details>`;
+  $('rv').hidden=false;
+  const no=$('cno');if(no)no.oninput=e=>{cno=e.target.value;try{localStorage.setItem('b5l5no',cno)}catch(x){}};
+  const nm=$('cname');if(nm)nm.oninput=e=>{cname=e.target.value;try{localStorage.setItem('b5l5name',cname)}catch(x){}};
+  $('retry').onclick=()=>startRound(st.r);
+  const nr=$('nextround');if(nr)nr.onclick=()=>startRound(st.r+1);
+  window.scrollTo(0,0);
+}
+
+
+$('tabs').onclick=e=>{const b=e.target.closest('[data-r]');if(b)startRound(+b.dataset.r)};
+$('opts').onclick=e=>{const b=e.target.closest('[data-o]');if(b)pick(+b.dataset.o)};
+$('hintbtn').onclick=()=>{cur().st.hint=true;render()};
+$('stay').onclick=clearAdv;
+$('timer').onclick=()=>{paused=!paused;drawT()};
+
+$('next').onclick=()=>{if(cur().st.done)go(1)};
+document.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT'||!$('start').hidden||st.view==='res')return;const s=cur().st;
+  if(e.key==='ArrowRight'&&s.done)go(1);
+  else if(/^[1-4]$/.test(e.key)&&s.open)pick(cur().ord[+e.key-1]);});
+tabs();render();
+
+// 背景音樂：Web Audio 即時合成的搖滾電音（約 140 BPM，A 小調 Am–F–C–G）
+const M={ctx:null,on:true,timer:null,step:0,next:0,master:null,noise:null};
+function musInit(){if(M.ctx)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;musBuild(new AC())}
+function musBuild(c){M.ctx=c;
+  const comp=c.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;comp.connect(c.destination);
+  M.master=c.createGain();M.master.gain.value=M.on?.32:0;M.master.connect(comp);
+  const b=c.createBuffer(1,c.sampleRate,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;M.noise=b;
+  M.dist=c.createWaveShaper();const cv=new Float32Array(1024);for(let i=0;i<1024;i++){const x=i/512-1;cv[i]=Math.tanh(x*4)}M.dist.curve=cv;
+  M.gtr=c.createBiquadFilter();M.gtr.type='lowpass';M.gtr.frequency.value=2600;M.dist.connect(M.gtr);const gg=c.createGain();gg.gain.value=.22;M.gtr.connect(gg);gg.connect(M.master)}
+function env(t,g,a,dcy,peak){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dcy)}
+function kick(t){const c=M.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);env(t,g,.002,.28,1);o.connect(g);g.connect(M.master);o.start(t);o.stop(t+.32)}
+function noiseHit(t,type,f,dcy,peak){const c=M.ctx,s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();s.buffer=M.noise;fl.type=type;fl.frequency.value=f;env(t,g,.001,dcy,peak);s.connect(fl);fl.connect(g);g.connect(M.master);s.start(t);s.stop(t+dcy+.02)}
+function snare(t){noiseHit(t,'bandpass',1800,.16,.55);const c=M.ctx,o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=190;env(t,g,.001,.08,.4);o.connect(g);g.connect(M.master);o.start(t);o.stop(t+.1)}
+function hat(t,acc){noiseHit(t,'highpass',8000,acc?.05:.025,acc?.18:.09)}
+function bass(t,f,len){const c=M.ctx,o=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';o.frequency.value=f;fl.type='lowpass';fl.frequency.setValueAtTime(1400,t);fl.frequency.exponentialRampToValueAtTime(300,t+len);env(t,g,.005,len,.42);o.connect(fl);fl.connect(g);g.connect(M.master);o.start(t);o.stop(t+len+.05)}
+function chug(t,f,len){const c=M.ctx,g=c.createGain();env(t,g,.004,len,.9);g.connect(M.dist);[1,1.5,2].forEach(m=>{const o=c.createOscillator();o.type='sawtooth';o.frequency.value=f*m;o.detune.value=(m-1.25)*12;o.connect(g);o.start(t);o.stop(t+len+.05)})}
+const ROOT=[110,87.31,130.81,98],BPM=140,S16=60/BPM/4;
+function sched(){const c=M.ctx;while(M.next<c.currentTime+.12){const s=M.step%16,bar=Math.floor(M.step/16)%4,t=M.next,f=ROOT[bar];
+  if(s%4===0||s===14)kick(t);if(s===4||s===12)snare(t);if(s%2===0)hat(t,s%4===2);else if(bar===3&&s>11)snare(t);
+  if(s%2===0)bass(t,s%4===2?f:f/2,S16*1.6);
+  if([0,3,6,10,12].includes(s))chug(t,f*2,S16*(s===12?3:1.4));
+  M.step++;M.next+=S16}}
+function musStart(){musInit();if(!M.ctx)return;M.ctx.resume();if(M.timer)return;M.next=M.ctx.currentTime+.05;M.timer=setInterval(sched,25)}
+$('go').onclick=()=>{$('start').hidden=true;startT();if(M.on)musStart()};
+nextState();
+}
+</script>
+</body>
+</html>
