@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>B5L6-02 字彙賓果</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 手機上的快節奏小遊戲，給程度較弱的高三生，答對有成就感
+   IDEA: 夜市轉盤＋賓果卡——題目出現，轉盤轉一圈停下，點答案，答對就在卡上蓋章
+   PICTURE: 四色圓轉盤佔畫面下半，賓果卡在答題後滑上來蓋章
+   COLOUR and TYPE: 米白底、深色字；轉盤藍橘綠紅四色；Baloo 2 英文、Noto Sans TC 中文
+   LAYOUT: 上方狀態列，題目卡，轉盤；答完後底部滑出賓果卡 */
+:root{color-scheme:light;--bg:#F5F3F0;--card:#fff;--ink:#221C26;--mute:#6B6570;--line:#E3DEE0;
+--q1:#2B6FE8;--q2:#F07B12;--q3:#1C9A5A;--q4:#D93A6A;--ok:#1C9A5A;--no:#D7191C;--stamp:#D7191C}
+*{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Noto Sans TC","Baloo 2",system-ui,sans-serif;overflow-x:hidden;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible{outline:3px solid var(--q1);outline-offset:2px}
+.app{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:10px 14px 14px}
+.top{display:flex;align-items:center;gap:8px}
+.top h1{margin:0;font:900 17px/1.2 "Noto Sans TC",sans-serif;margin-inline-end:auto}
+.top h1 small{display:block;font:500 11px "Noto Sans TC",sans-serif;color:var(--mute)}
+.pill{font:800 15px "Noto Sans TC",sans-serif;background:var(--ink);color:#fff;border-radius:999px;padding:6px 12px;white-space:nowrap}
+.cardbtn{white-space:nowrap;min-height:40px;padding:0 12px;border-radius:999px;border:2px solid var(--line);background:var(--card);font:700 14px "Noto Sans TC",sans-serif}
+.reel{position:relative;margin-top:10px;height:84px;border-radius:18px;background:var(--ink);padding:8px;box-shadow:0 4px 0 #000}
+.reel .win{position:relative;height:100%;border-radius:12px;background:#FFF8E6;overflow:hidden}
+.reel .win::before,.reel .win::after{content:"";position:absolute;left:0;right:0;height:16px;z-index:2;pointer-events:none}
+.reel .win::before{top:0;background:linear-gradient(#0005,transparent)}.reel .win::after{bottom:0;background:linear-gradient(transparent,#0005)}
+.strip{position:absolute;left:0;right:0;top:0}
+.strip div{height:68px;display:grid;place-items:center;padding:0 10px;text-align:center;font:900 clamp(22px,7vw,30px)/1.1 "Noto Sans TC",sans-serif;color:var(--ink)}
+.reel .tag{position:absolute;left:14px;top:-9px;z-index:3;background:var(--q2);color:#fff;font:800 12px "Noto Sans TC",sans-serif;border-radius:999px;padding:1px 10px}
+.reel .arrow{position:absolute;top:50%;width:0;height:0;border:10px solid transparent;transform:translateY(-50%);z-index:3}
+.reel .al{left:-2px;border-left-color:var(--q2)}.reel .ar{right:-2px;border-right-color:var(--q2)}
+.q{margin-top:8px;background:var(--card);border-radius:16px;padding:10px 14px;box-shadow:0 3px 0 var(--line);display:flex;flex-direction:column;justify-content:center}
+.q .kind{font:700 13px "Noto Sans TC",sans-serif;color:var(--q1)}
+.q .text{margin:4px 0 0;font:800 clamp(18px,5vw,22px)/1.35 "Baloo 2","Noto Sans TC",sans-serif}
+.q .text.zhq{font:900 clamp(26px,8vw,34px)/1.2 "Noto Sans TC",sans-serif}
+.gap{display:inline-block;min-width:3em;border-bottom:4px solid var(--q2);color:var(--q2)}
+.wheelwrap{flex:1;display:grid;place-items:center;padding:12px 0 4px}
+.wheel{position:relative;width:min(92vw,calc(100dvh - 300px),420px);aspect-ratio:1}
+.spin{position:absolute;inset:0}
+.spin.go{animation:spin .8s cubic-bezier(.2,.8,.25,1)}
+@keyframes spin{from{transform:rotate(-540deg)}to{transform:rotate(0)}}
+.spin svg{width:100%;height:100%;display:block;filter:drop-shadow(0 6px 0 rgba(0,0,0,.12))}
+.seg{hyphens:none;word-break:keep-all;position:absolute;width:50%;height:50%;display:flex;align-items:center;justify-content:center;padding:14% 8% 14% 8%;text-align:center;color:#fff;font:800 clamp(14px,4.3vw,19px)/1.15 "Baloo 2","Noto Sans TC",sans-serif;overflow-wrap:break-word}
+.seg span{display:block;max-width:100%}
+.seg b{display:block;font:800 12px "Baloo 2",sans-serif;opacity:.85;margin-bottom:2px}
+.s0{left:0;top:0;padding-left:16%;padding-top:20%}.s1{right:0;top:0;padding-right:16%;padding-top:20%}
+.s2{left:0;bottom:0;padding-left:16%;padding-bottom:20%}.s3{right:0;bottom:0;padding-right:16%;padding-bottom:20%}
+.hit{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.hit button{position:absolute;width:50%;height:50%}
+.hit .h0{left:0;top:0}.hit .h1{right:0;top:0}.hit .h2{left:0;bottom:0}.hit .h3{right:0;bottom:0}
+.hub{position:absolute;left:50%;top:50%;width:24%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:var(--card);border:5px solid var(--ink);display:grid;place-items:center;font:800 clamp(18px,5vw,24px) "Baloo 2",sans-serif;pointer-events:none}
+.mark{position:absolute;font:900 54px/1 "Noto Sans TC",sans-serif;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.3);pointer-events:none}
+.dim{opacity:.35}
+/* 賓果卡抽屜 */
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:5;transform:translateY(105%);transition:transform .3s ease}
+.sheet.open{transform:none}
+.sheet .in{max-width:520px;margin:0 auto;background:var(--card);border-radius:24px 24px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.18);padding:12px 12px calc(14px + env(safe-area-inset-bottom))}
+.res{font:900 18px/1.35 "Noto Sans TC",sans-serif;margin:2px 4px 10px}
+.res.ok{color:var(--ok)}.res.no{color:var(--no)}
+.res small{display:block;font:500 14px "Noto Sans TC",sans-serif;color:var(--mute)}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.cell{position:relative;aspect-ratio:1;border-radius:10px;background:var(--bg);border:2px solid var(--line);display:grid;place-items:center;padding:2px;text-align:center;font:800 clamp(9px,2.8vw,13px)/1.1 "Baloo 2",sans-serif;overflow-wrap:break-word;overflow:hidden}
+.cell.ph{font-size:clamp(8px,2.4vw,11px)}
+.cell span{position:relative;z-index:1}
+.cell.long{font-size:clamp(8px,2.3vw,11px)}
+.cell.on{color:#8A0F12;background:#FDE2E2;border-color:var(--stamp)}
+.cell.on::after{content:"✓";position:absolute;right:3px;top:1px;font:900 13px/1 "Noto Sans TC",sans-serif;color:var(--stamp)}
+.cell.new::after{animation:stamp .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes stamp{from{transform:scale(2.2) rotate(-20deg);opacity:0}}
+.cell.line{background:#FFF1C2;border-color:#E9B93A}
+.close{display:block;margin:10px auto 0;min-height:44px;padding:0 20px;border-radius:22px;background:var(--ink);color:#fff;font:700 15px "Noto Sans TC",sans-serif}
+.bingo{position:fixed;inset:0;z-index:8;display:grid;place-items:center;pointer-events:none}
+.bingo p{margin:0;font:800 clamp(56px,18vw,96px)/1 "Baloo 2",sans-serif;color:var(--q2);text-shadow:0 5px 0 var(--ink);animation:pop 1.1s ease both}
+@keyframes pop{0%{transform:scale(.3);opacity:0}25%{transform:scale(1.15);opacity:1}80%{opacity:1}100%{transform:scale(1);opacity:0}}
+/* 開始與結果 */
+.start{position:fixed;inset:0;z-index:9;background:rgba(245,243,240,.96);display:grid;place-items:center;padding:24px;text-align:center}
+.start h2{margin:0;font:900 clamp(30px,9vw,42px)/1.15 "Noto Sans TC",sans-serif}
+.start p{margin:10px 0 0;font:500 16px/1.6 "Noto Sans TC",sans-serif;color:var(--mute)}
+.start button{margin-top:22px;min-height:60px;padding:0 36px;border-radius:30px;background:var(--q2);color:#fff;font:900 22px "Noto Sans TC",sans-serif;box-shadow:0 5px 0 #B65A08}
+.result{display:none;padding-top:10px}
+.result h2{margin:0 0 10px;font:900 28px "Noto Sans TC",sans-serif}
+.cert{background:#fff;border:3px solid #B8860B;outline:1px solid #B8860B;outline-offset:-9px;border-radius:6px;padding:22px 16px 18px;text-align:center;font-family:"Noto Sans TC",serif}
+.cert .ct{margin:0;font:900 30px/1.2 "Noto Sans TC",sans-serif;color:#8A6200;letter-spacing:.08em}
+.cert .ce{margin:2px 0 12px;font:700 13px "Baloo 2",sans-serif;color:#8A6200}
+.cert .cb{margin:0;font:700 16px/2 "Noto Sans TC",sans-serif}
+.cert input{font:900 18px "Noto Sans TC",sans-serif;border:0;border-bottom:2px solid var(--ink);width:6em;text-align:center;background:transparent;color:var(--ink)}
+.cert input.no{width:2.6em}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 8px}
+.stats div{background:var(--bg);border-radius:12px;padding:8px}
+.stats b{display:block;font:800 26px/1.1 "Baloo 2",sans-serif}
+.stats span{font:700 12px "Noto Sans TC",sans-serif;color:var(--mute)}
+.weak{margin:10px 0 0;font:700 14px/1.7 "Noto Sans TC",sans-serif}.weak b{color:var(--no)}
+.cd{margin:10px 0 0;font:500 12px "Noto Sans TC",sans-serif;color:var(--mute)}
+.again{display:block;width:100%;margin-top:14px;min-height:52px;border-radius:26px;background:var(--ink);color:#fff;font:900 18px "Noto Sans TC",sans-serif}
+.tip{font:500 13px "Noto Sans TC",sans-serif;color:var(--mute);text-align:center;margin:8px 0 0}
+[hidden]{display:none!important}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1>字彙賓果<small>B5L6-02｜第五冊 Lesson 6</small></h1>
+    <span class="pill" id="lines">BINGO 0/3</span>
+    <button class="cardbtn" id="showcard">賓果卡</button>
+  </header>
+  <main id="play">
+    <div class="reel"><span class="tag">賓果機</span><span class="arrow al"></span><span class="arrow ar"></span><div class="win"><div class="strip" id="strip"></div></div></div>
+    <section class="q" aria-live="polite"><span class="kind" id="kind"></span><p class="text" id="qtext" hidden></p></section>
+    <div class="wheelwrap">
+      <div class="wheel" id="wheel">
+        <div class="spin" id="spin">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <path d="M100 100V2A98 98 0 0 0 2 100Z" fill="var(--q1)"/>
+            <path d="M100 100V2A98 98 0 0 1 198 100Z" fill="var(--q2)"/>
+            <path d="M100 100H2A98 98 0 0 0 100 198Z" fill="var(--q3)"/>
+            <path d="M100 100H198A98 98 0 0 1 100 198Z" fill="var(--q4)"/>
+            <circle cx="100" cy="100" r="98" fill="none" stroke="#221C26" stroke-width="4"/>
+            <path d="M100 2V198M2 100H198" stroke="#fff" stroke-width="3"/>
+          </svg>
+          <div class="seg s0" id="o0"></div><div class="seg s1" id="o1"></div><div class="seg s2" id="o2"></div><div class="seg s3" id="o3"></div>
+        </div>
+        <div class="hit"><button class="h0" data-k="0" aria-label="選項 A"></button><button class="h1" data-k="1" aria-label="選項 B"></button><button class="h2" data-k="2" aria-label="選項 C"></button><button class="h3" data-k="3" aria-label="選項 D"></button></div>
+        <div class="hub" id="hub">1</div>
+      </div>
+    </div>
+  </main>
+  <section class="result" id="result"></section>
+</div>
+
+<div class="sheet" id="sheet"><div class="in"><p class="res" id="res"></p><div class="board" id="board"></div><button class="close" id="close" hidden>回到題目</button></div></div>
+<div class="bingo" id="bingo" hidden><p>BINGO!</p></div>
+<div class="start" id="start"><div><h2>字彙賓果</h2><p>賓果機轉出中文意思，點轉盤上的英文答案<br>答對就在賓果卡蓋章，連成 <b>3 條線</b>就過關！<br>每題 10 秒</p><button id="go">開始遊戲 ▶</button></div></div>
+
+<script>
+{
+const ITEMS=[{"w": "tourist", "zh": "觀光客", "ph": false, "p": "Many ___ visit Kenting to enjoy the sunshine and the beautiful sea.", "z": "很多觀光客造訪墾丁享受陽光和美麗的海洋。", "a": "tourists", "o": ["tourists", "burdens", "properties", "measures"]}, {"w": "flock", "zh": "聚集", "ph": false, "p": "People ___ to department stores on Black Friday to get all their Christmas shopping done.", "z": "人們在黑色星期五聚集到百貨公司裡為聖誕節大採購。", "a": "flock", "o": ["flock", "litter", "disturb", "attempt"]}, {"w": "annual", "zh": "每年的", "ph": false, "p": "The company’s ___ Christmas party is held in early December.", "z": "這家公司每年的聖誕節派對在十二月初舉行。", "a": "annual", "o": ["annual", "financial", "practical", "detailed"]}, {"w": "benefit", "zh": "得利於；好處", "ph": false, "p": "Small businesses often ___ from using social media to reach new customers.", "z": "小企業常常得利於利用社群媒體接觸新客戶。", "a": "benefit", "o": ["benefit", "disturb", "litter", "measure"]}, {"w": "expansion", "zh": "擴張", "ph": false, "p": "The ___ of large supermarket chains is threatening small local grocery stores.", "z": "大型連鎖超市的擴張正在威脅著小型的地方雜貨店。", "a": "expansion", "o": ["expansion", "tourist", "resident", "property"]}, {"w": "burden", "zh": "負擔", "ph": false, "p": "Raising four children can be a heavy ___, but Mr. and Mrs. Wu enjoy it.", "z": "養育四個孩子是個沉重的負擔，但是吳先生和吳太太樂於承擔。", "a": "burden", "o": ["burden", "resident", "tourist", "detail"]}, {"w": "resident", "zh": "居民", "ph": false, "p": "This small country village has no more than 200 ___.", "z": "這個小小的鄉間村落有不超過200位居民。", "a": "residents", "o": ["residents", "burdens", "measures", "details"]}, {"w": "litter", "zh": "亂丟（垃圾）", "ph": false, "p": "Many people in this town ___ on the street, so the whole town looks ugly.", "z": "這個城鎮很多人在街上亂丟垃圾，所以整個城鎮看起來很醜。", "a": "litter", "o": ["litter", "rent", "expand", "disturb"]}, {"w": "furthermore", "zh": "此外", "ph": false, "p": "Customers love this restaurant because the food is great. ___, they enjoy the good service.", "z": "顧客們因為食物很棒而喜愛這家餐廳。此外，他們也享受良好的服務。", "a": "Furthermore", "o": ["Furthermore", "Elsewhere", "Annual", "Practical"]}, {"w": "rented", "zh": "租借的", "ph": false, "p": "David’s ___ room is tiny, but it is all he can afford now.", "z": "David租的房間非常小，但他現在只負擔得起這個房間。", "a": "rented", "o": ["rented", "financial", "annual", "detailed"]}, {"w": "property", "zh": "房產", "ph": false, "p": "Alice is seeking an opportunity to own a ___ abroad.", "z": "Alice正在尋找擁有海外房產的機會。", "a": "property", "o": ["property", "burden", "measure", "resident"]}, {"w": "elsewhere", "zh": "在別處", "ph": false, "p": "You won’t find this item ___. It’s for sale only on our flights to Asia.", "z": "你不會在其他地方找到這個商品。它只在我們飛往亞洲的班機上販售。", "a": "elsewhere", "o": ["elsewhere", "furthermore", "annual", "financial"]}, {"w": "practical", "zh": "切實可行的", "ph": false, "p": "It would not be ___ to ask only one person to finish all these jobs in just a week.", "z": "要求只有一個人在僅僅一週內就要完成所有這些工作，是不切實際的。", "a": "practical", "o": ["practical", "annual", "financial", "detailed"]}, {"w": "measure", "zh": "措施；測量", "ph": false, "p": "Mark is taking ___ to improve his health by changing his diet.", "z": "Mark藉由改變他的飲食採取措施來改善他的健康。", "a": "measures", "o": ["measures", "residents", "properties", "burdens"]}, {"w": "impact", "zh": "衝擊；巨大影響", "ph": false, "p": "Extreme weather, such as heat waves, is having an ___ on people’s lives.", "z": "極端的天氣現象，像是熱浪，正在對人們的生活造成巨大的影響。", "a": "impact", "o": ["impact", "expansion", "attempt", "resident"]}, {"w": "detailed", "zh": "詳細的", "ph": false, "p": "With your ___ description, I believe the airline workers will find your luggage soon.", "z": "有了你詳細的描述，我相信航空公司的工作人員很快就會找到你的行李。", "a": "detailed", "o": ["detailed", "annual", "financial", "rented"]}, {"w": "financial", "zh": "財務的", "ph": false, "p": "Frank does not want to ask for ___ support from his father.", "z": "Frank不想要向他的父親尋求財務支援。", "a": "financial", "o": ["financial", "annual", "rented", "elsewhere"]}, {"w": "disturb", "zh": "打擾", "ph": false, "p": "The noise from next door ___ my sleep last night.", "z": "隔壁傳來的噪音打擾了我昨晚的睡眠。", "a": "disturbed", "o": ["disturbed", "benefited", "measured", "rented"]}, {"w": "attempt", "zh": "試圖", "ph": false, "p": "Little Frank ___ to reach the chocolate in the cupboard by standing on a chair.", "z": "小Frank藉由站在一張椅子上試圖拿到櫥櫃裡的巧克力。", "a": "attempted", "o": ["attempted", "littered", "disturbed", "measured"]}, {"w": "have sth. on one's hands", "zh": "有⋯⋯問題要處理", "ph": true, "p": "Sarah has a problem ___. She lost the necklace her friend lent her.", "z": "Sarah有一個問題要處理。她弄丟了她的朋友借給她的項鍊。", "a": "on her hands", "o": ["on her hands", "at once", "in detail", "elsewhere"]}, {"w": "be fed up with", "zh": "受夠了⋯⋯", "ph": true, "p": "I am really ___ the constant news about the election. Let’s watch a movie instead.", "z": "我真的受夠了不間斷的選舉新聞。讓我們改看一部電影吧。", "a": "fed up with", "o": ["fed up with", "kicked out of", "benefited from", "attempting"]}, {"w": "kick sb. out", "zh": "驅逐某人", "ph": true, "p": "The coach ___ the soccer player out of the team because he used drugs.", "z": "教練把那名足球員逐出球隊，因為他使用毒品。", "a": "kicked", "o": ["kicked", "struck", "disturbed", "benefited"]}, {"w": "be sick of", "zh": "厭惡", "ph": true, "p": "Tom was ___ losing to his friends at tennis, so he decided to train harder.", "z": "Tom厭惡打網球輸給他的朋友們，所以他決定更加認真訓練。", "a": "sick of", "o": ["sick of", "kicked out of", "benefited from", "attempting"]}, {"w": "at once", "zh": "同時；立刻", "ph": true, "p": "When the bell rings, you must put down your pencil ___.", "z": "當鐘聲響起時，你必須立刻放下你的鉛筆。", "a": "at once", "o": ["at once", "furthermore", "annual", "practical"]}, {"w": "strike a balance", "zh": "取得平衡", "ph": true, "p": "Selina manages to ___ between family and work. She is a good model of a successful woman.", "z": "Selina能設法在家庭和工作之間取得平衡。她是成功女性的良好典範。", "a": "strike a balance", "o": ["strike a balance", "kick them out", "take measures", "attempting"]}];
+const GOAL=3,LIMIT=10,NEXT=2200;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const LINES=[];for(let i=0;i<5;i++){LINES.push([0,1,2,3,4].map(j=>i*5+j));LINES.push([0,1,2,3,4].map(j=>j*5+i))}LINES.push([0,6,12,18,24],[4,8,12,16,20]);
+let S;
+function reset(){S={board:shuf(ITEMS.map((_,i)=>i)),on:new Set(),queue:shuf(ITEMS.map((_,i)=>i)),n:0,ok:0,time:0,wrong:{},done:false,cur:null,lines:0,lineSet:new Set()};drawBoard();$('lines').textContent=`BINGO 0/${GOAL}`}
+function drawBoard(newIdx){
+  $('board').innerHTML=S.board.map((it,pos)=>{const x=ITEMS[it];return `<div class="cell${x.ph?' ph':''}${!x.ph&&x.w.length>9?' long':''}${S.on.has(it)?' on':''}${it===newIdx?' new':''}${S.lineSet.has(pos)?' line':''}"><span>${esc(x.w)}</span></div>`}).join('');
+}
+let t0=0,timer=null,locked=false;
+let spinning=false;
+function ask(){
+  if(S.done)return;
+  const it=S.queue.shift();S.cur=it;S.n++;locked=true;spinning=true;
+  const x=ITEMS[it],type=Math.random()<.5?'zh':'sent';
+  // 賓果機捲軸：快速轉過其他中文意思，停在這一題
+  const pool=shuf(ITEMS.filter(y=>y!==x)).slice(0,14).map(y=>y.zh);
+  const seq=[...pool,x.zh];const strip=$('strip');const H=68;
+  strip.innerHTML=seq.map(s=>`<div>${esc(s)}</div>`).join('');
+  strip.style.transition='none';strip.style.transform='translateY(0)';void strip.offsetWidth;
+  strip.style.transition='transform 1.3s cubic-bezier(.15,.75,.25,1)';strip.style.transform=`translateY(-${(seq.length-1)*H}px)`;
+  $('kind').textContent='賓果機轉動中⋯⋯';$('qtext').hidden=true;
+  ['o0','o1','o2','o3'].forEach(id=>{$(id).innerHTML='';$(id).classList.remove('dim')});
+  document.querySelectorAll('.mark').forEach(m=>m.remove());$('hub').textContent=S.n;
+  let opts,ans;
+  if(type==='zh'){ans=x.w;opts=shuf([x.w,...shuf(ITEMS.filter(y=>y!==x&&y.ph===x.ph)).slice(0,3).map(y=>y.w)])}
+  else{ans=x.a;opts=shuf(x.o.slice())}
+  S.ans=ans;S.opts=opts;
+  setTimeout(()=>{
+    spinning=false;
+    if(type==='zh'){$('kind').textContent='轉盤上哪一個是這個意思？';$('qtext').hidden=true}
+    else{$('kind').textContent='課本例句：選出填入空格的答案';$('qtext').className='text';$('qtext').innerHTML=esc(x.p).replace('___','<span class="gap">　</span>');$('qtext').hidden=false}
+    opts.forEach((o,k)=>{$('o'+k).innerHTML=`<span><b>${'ABCD'[k]}</b>${esc(o)}</span>`});
+    const sp=$('spin');sp.classList.remove('go');void sp.offsetWidth;sp.classList.add('go');
+    setTimeout(()=>{locked=false;t0=performance.now();clearTimeout(timer);timer=setTimeout(()=>answer(-1),LIMIT*1000)},500);
+  },1350);
+}
+function mark(k,ok){const m=document.createElement('div');m.className='mark';m.textContent=ok?'✓':'✗';
+  const pos=[[25,25],[75,25],[25,75],[75,75]][k];m.style.left=`calc(${pos[0]}% - 18px)`;m.style.top=`calc(${pos[1]}% - 30px)`;$('wheel').appendChild(m)}
+function answer(k){
+  if((locked&&k!==-1)||S.done||spinning)return;locked=true;clearTimeout(timer);
+  const dt=Math.min(LIMIT,(performance.now()-t0)/1000);S.time+=dt;
+  const right=S.opts.indexOf(S.ans),ok=k===right,x=ITEMS[S.cur];
+  S.opts.forEach((_,i)=>{if(i!==right&&i!==k)$('o'+i).classList.add('dim')});
+  if(k>=0)mark(k,ok);if(!ok)mark(right,true);
+  let res;
+  if(ok){S.ok++;S.on.add(S.cur);sfx(true);res=`<p class="res ok">✓ 答對！${esc(x.w)}　${esc(x.zh)}<small>蓋章！</small></p>`}
+  else{S.wrong[x.w]=(S.wrong[x.w]||0)+1;S.queue.push(S.cur);sfx(false);res=`<p class="res no">${k<0?'⏰ 時間到！':'✗ 答錯了！'}正確答案是 ${esc(S.ans)}<small>${esc(x.w)}＝${esc(x.zh)}（等一下會再出現）</small></p>`}
+  $('res').outerHTML=res.replace('<p class="res','<p id="res" class="res');
+  const before=S.lines;checkLines();drawBoard(ok?S.cur:null);
+  $('close').hidden=true;$('sheet').classList.add('open');
+  if(S.lines>before){const b=$('bingo');b.hidden=false;b.firstElementChild.style.animation='none';void b.offsetWidth;b.firstElementChild.style.animation='';setTimeout(()=>b.hidden=true,1100)}
+  $('lines').textContent=`BINGO ${Math.min(S.lines,GOAL)}/${GOAL}`;
+  setTimeout(()=>{$('sheet').classList.remove('open');if(S.lines>=GOAL){finish()}else ask()},S.lines>before?NEXT+600:NEXT);
+}
+function checkLines(){let c=0;S.lineSet=new Set();LINES.forEach(L=>{if(L.every(p=>S.on.has(S.board[p]))){c++;L.forEach(p=>S.lineSet.add(p))}});S.lines=c}
+let cname='',cno='';try{cname=localStorage.getItem('b5l6bname')||'';cno=localStorage.getItem('b5l6bno')||''}catch(e){}
+function finish(){
+  S.done=true;clearTimeout(timer);$('sheet').classList.remove('open');$('play').hidden=true;$('showcard').hidden=true;
+  const acc=Math.round(S.ok/S.n*100),now=new Date(),p2=v=>String(v).padStart(2,'0');
+  const date=`${now.getFullYear()} 年 ${now.getMonth()+1} 月 ${now.getDate()} 日 ${p2(now.getHours())}:${p2(now.getMinutes())}`;
+  const wk=Object.keys(S.wrong);
+  const r=$('result');r.style.display='block';
+  r.innerHTML=`<h2>BINGO 過關！</h2>
+  <div class="cert"><p class="ct">賓果過關證書</p><p class="ce">B5L6-02 Vocabulary Bingo</p>
+  <p class="cb">茲證明 <input id="cno" class="no" value="${esc(cno)}" placeholder="座號" inputmode="numeric" aria-label="座號"> 號 <input id="cname" value="${esc(cname)}" placeholder="姓名" aria-label="姓名"> 同學<br>完成第五冊 Lesson 6 字彙賓果</p>
+  <div class="stats"><div><b>${GOAL} 條</b><span>連線</span></div><div><b>${acc}%</b><span>正確率</span></div><div><b>${S.ok}/${S.n}</b><span>答對／作答題數</span></div><div><b>${S.time.toFixed(1)}</b><span>總答題秒數</span></div></div>
+  <p class="weak"><b>待加強：</b>${wk.length?wk.map(esc).join('、'):'全部答對，太厲害了！'}</p>
+  <p class="cd">遊戲編號 B5L6-02｜${date}</p></div>
+  <p class="tip">輸入座號和姓名後，截圖這張證書，傳到英文課 LINE 群組。</p>
+  <button class="again" id="again">再玩一次</button>`;
+  $('cno').oninput=e=>{cno=e.target.value;try{localStorage.setItem('b5l6bno',cno)}catch(x){}};
+  $('cname').oninput=e=>{cname=e.target.value;try{localStorage.setItem('b5l6bname',cname)}catch(x){}};
+  $('again').onclick=()=>{r.style.display='none';r.innerHTML='';$('play').hidden=false;$('showcard').hidden=false;reset();ask()};
+  window.scrollTo(0,0);
+}
+// 音效：答對叮咚、答錯嗡
+function sfx(ok){if(!M.ctx)return;const c=M.ctx,t=c.currentTime,g=c.createGain();g.connect(c.destination);
+  const notes=ok?[784,1047]:[180,150];notes.forEach((f,i)=>{const o=c.createOscillator();o.type=ok?'triangle':'sawtooth';o.frequency.value=f;const gg=c.createGain();gg.gain.setValueAtTime(.0001,t+i*.1);gg.gain.exponentialRampToValueAtTime(ok?.35:.18,t+i*.1+.01);gg.gain.exponentialRampToValueAtTime(.0001,t+i*.1+.25);o.connect(gg);gg.connect(c.destination);o.start(t+i*.1);o.stop(t+i*.1+.3)})}
+// 背景音樂：Web Audio 即時合成的搖滾電音（約 140 BPM，A 小調 Am–F–C–G）
+const M={ctx:null,on:true,timer:null,step:0,next:0,master:null,noise:null};
+function musInit(){if(M.ctx)return;const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;musBuild(new AC())}
+function musBuild(c){M.ctx=c;
+  const comp=c.createDynamicsCompressor();comp.threshold.value=-14;comp.ratio.value=4;comp.connect(c.destination);
+  M.master=c.createGain();M.master.gain.value=M.on?.32:0;M.master.connect(comp);
+  const b=c.createBuffer(1,c.sampleRate,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;M.noise=b;
+  M.dist=c.createWaveShaper();const cv=new Float32Array(1024);for(let i=0;i<1024;i++){const x=i/512-1;cv[i]=Math.tanh(x*4)}M.dist.curve=cv;
+  M.gtr=c.createBiquadFilter();M.gtr.type='lowpass';M.gtr.frequency.value=2600;M.dist.connect(M.gtr);const gg=c.createGain();gg.gain.value=.22;M.gtr.connect(gg);gg.connect(M.master)}
+function env(t,g,a,dcy,peak){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+dcy)}
+function kick(t){const c=M.ctx,o=c.createOscillator(),g=c.createGain();o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(42,t+.12);env(t,g,.002,.28,1);o.connect(g);g.connect(M.master);o.start(t);o.stop(t+.32)}
+function noiseHit(t,type,f,dcy,peak){const c=M.ctx,s=c.createBufferSource(),fl=c.createBiquadFilter(),g=c.createGain();s.buffer=M.noise;fl.type=type;fl.frequency.value=f;env(t,g,.001,dcy,peak);s.connect(fl);fl.connect(g);g.connect(M.master);s.start(t);s.stop(t+dcy+.02)}
+function snare(t){noiseHit(t,'bandpass',1800,.16,.55);const c=M.ctx,o=c.createOscillator(),g=c.createGain();o.type='triangle';o.frequency.value=190;env(t,g,.001,.08,.4);o.connect(g);g.connect(M.master);o.start(t);o.stop(t+.1)}
+function hat(t,acc){noiseHit(t,'highpass',8000,acc?.05:.025,acc?.18:.09)}
+function bass(t,f,len){const c=M.ctx,o=c.createOscillator(),fl=c.createBiquadFilter(),g=c.createGain();o.type='sawtooth';o.frequency.value=f;fl.type='lowpass';fl.frequency.setValueAtTime(1400,t);fl.frequency.exponentialRampToValueAtTime(300,t+len);env(t,g,.005,len,.42);o.connect(fl);fl.connect(g);g.connect(M.master);o.start(t);o.stop(t+len+.05)}
+function chug(t,f,len){const c=M.ctx,g=c.createGain();env(t,g,.004,len,.9);g.connect(M.dist);[1,1.5,2].forEach(m=>{const o=c.createOscillator();o.type='sawtooth';o.frequency.value=f*m;o.detune.value=(m-1.25)*12;o.connect(g);o.start(t);o.stop(t+len+.05)})}
+const ROOT=[110,87.31,130.81,98],BPM=140,S16=60/BPM/4;
+function sched(){const c=M.ctx;while(M.next<c.currentTime+.12){const s=M.step%16,bar=Math.floor(M.step/16)%4,t=M.next,f=ROOT[bar];
+  if(s%4===0||s===14)kick(t);if(s===4||s===12)snare(t);if(s%2===0)hat(t,s%4===2);else if(bar===3&&s>11)snare(t);
+  if(s%2===0)bass(t,s%4===2?f:f/2,S16*1.6);
+  if([0,3,6,10,12].includes(s))chug(t,f*2,S16*(s===12?3:1.4));
+  M.step++;M.next+=S16}}
+function musStart(){musInit();if(!M.ctx)return;M.ctx.resume();if(M.timer)return;M.next=M.ctx.currentTime+.05;M.timer=setInterval(sched,25)}
+
+document.querySelectorAll('.hit button').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
+$('showcard').onclick=()=>{if(spinning)return;$('res').textContent=`已蓋章 ${S.on.size} 格，連線 ${S.lines} 條`;$('res').className='res';$('close').hidden=false;drawBoard();$('sheet').classList.add('open')};
+$('close').onclick=()=>$('sheet').classList.remove('open');
+$('go').onclick=()=>{$('start').hidden=true;musStart();reset();ask()};
+}
+</script>
+</body>
+</html>
