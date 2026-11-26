@@ -12,3 +12,4 @@
 | B5 | L3–L4 | 單字片語挑戰（中英四選一） | https://changjenhsin0602.github.io/grade12-english/B5/L3-L4-words-phrases/ |
 | B5 | L3–L4 | 重點複習挑戰（25 個重點，中英四選一） | https://changjenhsin0602.github.io/grade12-english/B5/L3-L4-review-quiz/ |
 | B5 | L5 | B5L5-01 字彙盲盒（情境猜單字＋課本例句，共三關） | https://changjenhsin0602.github.io/grade12-english/B5/L5-01/ |
+| B5 | L6 | B5L6-01 字彙盲盒（情境猜單字＋課本例句，共三關） | https://changjenhsin0602.github.io/grade12-english/B5/L6-01/ |
